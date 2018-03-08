@@ -13,5 +13,5 @@
 1. Open the "**test.html**" file in your browser
 1. Open browser console (**F12**)
 1. If you see an array of accounts, everything works correctly  
-It should look like this:
+It should look like this:  
 ![Accounts](/images/accounts.png)
