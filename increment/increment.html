@@ -1,0 +1,21 @@
+<html>
+<head>
+    <title>Increment</title>
+</head>
+<body>
+<script src="path_to_web3\node_modules\web3\dist\web3.js"></script>
+<script src= "increment.js"></script>
+<button type="button" onclick="createContract()">Create a new contract</button>
+<br><br>
+<input id = "addr" type="text">
+<button type="button" onclick='connectToContract()'>Connect to a contract</button>
+<br><br>
+<p id = "curValue"></p>
+<button type="button" id = "incButton" onclick="increase()" style = "visibility:hidden;">++</button>
+<br><br>
+<button type="button" id = "refreshButton" onclick="refresh()" style = "visibility:hidden;">refresh</button>
+<br><br>
+<button type="button" id = "logButton" onclick="console.log(getCounter().toString())" style = "visibility:hidden;">log value</button>
+
+</body>
+</html>

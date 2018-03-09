@@ -8,7 +8,7 @@
 
 ## Check workability
 Installed [*git*](https://git-scm.com/downloads) needed.  
-1. Specify the path path to web3 in the "**test.html**" file
+1. Specify the path path to web3 in the "**test.html**" file  
 (line 7: "<script src="path_to_web3\node_modules\web3\dist\web3.js"></script>")
 1. Start the test node using "**testrpc**"
 1. Open the "**test.html**" file in your browser
