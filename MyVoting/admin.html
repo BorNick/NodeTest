@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>Admin page</title>
+	</head>
+	<body>
+		<script src="C:\web3\node_modules\web3\dist\web3.js"></script>
+		
+		<p id="question"></p>
+		<div id="eligible">
+			<p id="eligible_area">
+				<textarea id="addresses" name="list" cols="40" rows="5"></textarea>
+				<br>
+				<button onclick="setEligible()" class="btn btn-secondary">Update eligibility list</button>
+			</p>
+			<p><button onclick="finishEligible()" class="btn btn-primary">Next</button></p>
+		</div>
+		<div hidden id="registrationSetQuestion">
+			<p>Question:  <input type='text' id='questioninput' value='Dummy Question?'/> </p>
+			<p><input type="checkbox" id="commitmenttick" checked> Enable the 'Commitment' Phase?</p>
+			<p id="beginRegistrationbutton"><button onclick="beginRegistration()" class="btn btn-primary">Begin Registration Phase</button></p>
+        </div>
+		<div hidden id="finishRegistration">
+			<p id="currentRegistration"></p>
+			<p id="finishby"></p>
+			<p id="totalregistered"></p>
+			<button class="btn btn-primary" onclick="finishRegistration()">Finish Registration Phase</button>
+        </div>
+		<script src= "admin.js"></script>
+	</body>
+	<script src="js/jquery.min.js"></script>
+</html>
