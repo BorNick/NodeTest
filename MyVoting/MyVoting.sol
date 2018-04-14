@@ -110,10 +110,10 @@ contract owned {
 contract MyVoting is owned {
     
     // Modulus for public keys
-    uint constant p = 0x62BACBCB00416944EE64319A32F67DB3;
+    uint constant p = 11;
     
     // Base point (generator) g
-    uint constant g = 0x6F589A75800F01E00B855C20242B80E;
+    uint constant g = 6;
     
     //Every address has an index
     //This makes looping in the program easier.
@@ -163,9 +163,9 @@ contract MyVoting is owned {
         for(uint i=0; i<addr.length; i++) {
 
             if(!eligible[addr[i]]) {
-            eligible[addr[i]] = true;
-            addresses.push(addr[i]);
-            totaleligible += 1;
+                eligible[addr[i]] = true;
+                addresses.push(addr[i]);
+                totaleligible += 1;
             }
         }
     }
@@ -274,7 +274,7 @@ contract MyVoting is owned {
     }
     
     // Given the 1 out of 2 ZKP - record the users vote!
-    function submitVote(uint[4] params, uint[2] y, uint[2] a1, uint[2] b1, uint[2] a2, uint[2] b2) inState(State.VOTE) public returns (bool) {
+    function submitVote(/*uint[4] params,*/ uint y/*, uint[2] a1, uint[2] b1, uint[2] a2, uint[2] b2*/) inState(State.VOTE) public returns (bool) {
 
         uint c = addressid[msg.sender];
 
@@ -286,7 +286,7 @@ contract MyVoting is owned {
             if(commitmentphase) {
 
                 // Voter has previously committed to the entire zero knowledge proof...
-                bytes32 h = sha3(msg.sender, params, voters[c].registeredkey, voters[c].reconstructedkey, y, a1, b1, a2, b2);
+                bytes32 h = sha3(msg.sender/*, params*/, voters[c].registeredkey, voters[c].reconstructedkey, y/*, a1, b1, a2, b2*/);
 
                 // No point verifying the ZKP if it doesn't match the voter's commitment.
                 if(voters[c].commitment != h) {

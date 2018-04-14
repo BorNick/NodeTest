@@ -453,7 +453,7 @@ var abi = [
 	}
 ];
 var myvoting = web3.eth.contract(abi);
-var myvotingAddr = myvoting.at("0x64c529f75ae57cae1580a8cd4011810f587286d1");
+var myvotingAddr = myvoting.at("0xd275c35aef497a223e7723254f028ff6acf33779");
 
 var addressChosen = true;
 var addr = "0x5a702815b36671631d134cbfe4eae186c8351141";
@@ -600,20 +600,13 @@ function finishRegistration() {
     return;
   }
 
-  var time = new Date();
-  var finishReg = anonymousvotingAddr.finishSignupPhase() * 1000;
 
-  if(time.getTime() < finishReg) {
-    alert("Please wait until " + clockformat(new Date(finishReg)) + " before finishing registration");
-    return;
-  }
-
-  web3.personal.unlockAccount(addr,password);
+  //web3.personal.unlockAccount(addr,password);
 
   res = anonymousvotingAddr.finishRegistrationPhase.sendTransaction({from:web3.eth.accounts[accountindex], gas: 4200000});
   document.getElementById("finishRegistration").innerHTML  = "Waiting for Ethereum to confirm that Registration has finished";
 
-  txlist("Finish Registration Phase: " + res);
+  //txlist("Finish Registration Phase: " + res);
 }
 
 // Responsible for updating the website's text depending on the election's current phase. (i.e. if we are in VOTE, no point enabling compute button).
