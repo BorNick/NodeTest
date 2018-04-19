@@ -7,6 +7,9 @@ if (typeof web3 !== 'undefined') {
   web3 = new Web3(new Web3.providers.HttpProvider("http://localhost:8545"));
 }
 
+var finishRegistrationCreated = false;
+var commitCreate = false;
+
 // MyVoting Contract
 var abi = [
 	{
@@ -453,7 +456,7 @@ var abi = [
 	}
 ];
 var myvoting = web3.eth.contract(abi);
-var myvotingAddr = myvoting.at("0xd275c35aef497a223e7723254f028ff6acf33779");
+var myvotingAddr = myvoting.at("0x309d47ec3b3982e13638da74adf0f47f9acad214");
 
 var addressChosen = true;
 var addr = "0x5a702815b36671631d134cbfe4eae186c8351141";
@@ -563,7 +566,6 @@ function beginRegistration() {
   }
 }
 
-var finishRegistrationCreated = false;
 function createFinishRegistration() {
 
   if(!finishRegistrationCreated) {
@@ -595,7 +597,7 @@ function finishRegistration() {
     return;
   }
 
-  if(anonymousvotingAddr.totalregistered() < 3) {
+  if(myvotingAddr.totalregistered() < 3) {
     alert("Election cannot begin until there is 3 or more registered voters");
     return;
   }
@@ -603,10 +605,24 @@ function finishRegistration() {
 
   //web3.personal.unlockAccount(addr,password);
 
-  res = anonymousvotingAddr.finishRegistrationPhase.sendTransaction({from:web3.eth.accounts[accountindex], gas: 4200000});
+  res = myvotingAddr.finishRegistrationPhase.sendTransaction({from:web3.eth.accounts[accountindex], gas: 4200000});
   document.getElementById("finishRegistration").innerHTML  = "Waiting for Ethereum to confirm that Registration has finished";
 
   //txlist("Finish Registration Phase: " + res);
+}
+
+function createCommit() {
+
+  if(!commitCreate) {
+    commitCreate = true;
+    document.getElementById('commit').removeAttribute("hidden");
+    document.getElementById('finishRegistration').setAttribute("hidden",true);
+    document.getElementById('section_desc').innerHTML = "Waiting for voters to submit a commitment, but not reveal their encrypted vote to Etheruem. ";
+  }
+
+  // Keep track of how many voters have been set as eligible.
+  document.getElementById('totalcommit').innerHTML = myvotingAddr.totalcommitted() + "/" + myvotingAddr.totalregistered() + " voters have sealed their vote.";
+
 }
 
 // Responsible for updating the website's text depending on the election's current phase. (i.e. if we are in VOTE, no point enabling compute button).

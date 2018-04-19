@@ -4,6 +4,8 @@ var v = 3;//!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 var x = 5;
 var xG = 10;
 
+var registrationCreated = false;
+
 if (typeof web3 !== 'undefined') {
   web3 = new Web3(web3.currentProvider);
 } else {
@@ -588,11 +590,11 @@ var abi_crypto = [
 
 // MyVoting Contract
 var myvoting = web3.eth.contract(abi);
-var myvotingAddr = myvoting.at("0xd275c35aef497a223e7723254f028ff6acf33779");
+var myvotingAddr = myvoting.at("0x309d47ec3b3982e13638da74adf0f47f9acad214");
 
 // Local Crypto Contract
 var crypto_contract = web3.eth.contract(abi_crypto);
-var cryptoAddr = crypto_contract.at("0xde7a3591aa307df93573524c7f0a3b88eb545363");
+var cryptoAddr = crypto_contract.at("0xefa4dac5f73fc85bba9e0acb3b6fc8a945b46069");
 
     var password = "";
     var accounts_index;
@@ -643,6 +645,7 @@ function unlock() {
 		console.log(accounts_index);
         //controlTransition("#unlockfs", null);
         //document.getElementById('generalStatus').innerHTML = "You have selected the address " + addr;
+		currentState();
     //} else {
       //alert("Password was not correct. Try again.");
     //}
@@ -704,13 +707,14 @@ function register() {
         });
 
         document.getElementById("registerbutton").innerHTML  = "Waiting for registration to end";
+		createRegistration();
 
     } else {
         alert("Registration failed... Problem could be your voting codes or that you have already registered");
     }
 }
 	
-var registrationCreated = false;
+
 function createRegistration() {
 
 	if(!registrationCreated) {
