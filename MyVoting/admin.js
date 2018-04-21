@@ -9,18 +9,24 @@ if (typeof web3 !== 'undefined') {
 
 var finishRegistrationCreated = false;
 var commitCreate = false;
+var voteCreate = false;
+var tallyCreate = false;
 
 // MyVoting Contract
 var abi = [
 	{
-		"constant": true,
+		"constant": false,
 		"inputs": [
 			{
-				"name": "",
-				"type": "address"
+				"name": "_question",
+				"type": "string"
+			},
+			{
+				"name": "enableCommitmentPhase",
+				"type": "bool"
 			}
 		],
-		"name": "eligible",
+		"name": "beginSignUp",
 		"outputs": [
 			{
 				"name": "",
@@ -28,7 +34,7 @@ var abi = [
 			}
 		],
 		"payable": false,
-		"stateMutability": "view",
+		"stateMutability": "nonpayable",
 		"type": "function"
 	},
 	{
@@ -41,42 +47,9 @@ var abi = [
 		"type": "function"
 	},
 	{
-		"constant": true,
-		"inputs": [
-			{
-				"name": "",
-				"type": "address"
-			}
-		],
-		"name": "addressid",
-		"outputs": [
-			{
-				"name": "",
-				"type": "uint256"
-			}
-		],
-		"payable": false,
-		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"constant": true,
+		"constant": false,
 		"inputs": [],
-		"name": "totaleligible",
-		"outputs": [
-			{
-				"name": "",
-				"type": "uint256"
-			}
-		],
-		"payable": false,
-		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"constant": true,
-		"inputs": [],
-		"name": "commitmentphase",
+		"name": "finishRegistrationPhase",
 		"outputs": [
 			{
 				"name": "",
@@ -84,21 +57,34 @@ var abi = [
 			}
 		],
 		"payable": false,
-		"stateMutability": "view",
+		"stateMutability": "nonpayable",
 		"type": "function"
 	},
 	{
-		"constant": true,
-		"inputs": [],
-		"name": "question",
+		"constant": false,
+		"inputs": [
+			{
+				"name": "xG",
+				"type": "uint256"
+			},
+			{
+				"name": "vG",
+				"type": "uint256"
+			},
+			{
+				"name": "r",
+				"type": "uint256"
+			}
+		],
+		"name": "register",
 		"outputs": [
 			{
 				"name": "",
-				"type": "string"
+				"type": "bool"
 			}
 		],
 		"payable": false,
-		"stateMutability": "view",
+		"stateMutability": "nonpayable",
 		"type": "function"
 	},
 	{
@@ -131,39 +117,7 @@ var abi = [
 	},
 	{
 		"constant": false,
-		"inputs": [],
-		"name": "finishRegistrationPhase",
-		"outputs": [
-			{
-				"name": "",
-				"type": "bool"
-			}
-		],
-		"payable": false,
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"constant": true,
-		"inputs": [],
-		"name": "totalcommitted",
-		"outputs": [
-			{
-				"name": "",
-				"type": "uint256"
-			}
-		],
-		"payable": false,
-		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"constant": false,
 		"inputs": [
-			{
-				"name": "params",
-				"type": "uint256[4]"
-			},
 			{
 				"name": "y",
 				"type": "uint256"
@@ -181,18 +135,24 @@ var abi = [
 		"type": "function"
 	},
 	{
+		"inputs": [],
+		"payable": false,
+		"stateMutability": "nonpayable",
+		"type": "constructor"
+	},
+	{
 		"constant": true,
 		"inputs": [
 			{
 				"name": "",
-				"type": "address"
+				"type": "uint256"
 			}
 		],
-		"name": "votecast",
+		"name": "addresses",
 		"outputs": [
 			{
 				"name": "",
-				"type": "bool"
+				"type": "address"
 			}
 		],
 		"payable": false,
@@ -201,8 +161,13 @@ var abi = [
 	},
 	{
 		"constant": true,
-		"inputs": [],
-		"name": "totalvoted",
+		"inputs": [
+			{
+				"name": "",
+				"type": "address"
+			}
+		],
+		"name": "addressid",
 		"outputs": [
 			{
 				"name": "",
@@ -211,29 +176,6 @@ var abi = [
 		],
 		"payable": false,
 		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"constant": false,
-		"inputs": [
-			{
-				"name": "_question",
-				"type": "string"
-			},
-			{
-				"name": "enableCommitmentPhase",
-				"type": "bool"
-			}
-		],
-		"name": "beginSignUp",
-		"outputs": [
-			{
-				"name": "",
-				"type": "bool"
-			}
-		],
-		"payable": false,
-		"stateMutability": "nonpayable",
 		"type": "function"
 	},
 	{
@@ -257,13 +199,8 @@ var abi = [
 	},
 	{
 		"constant": true,
-		"inputs": [
-			{
-				"name": "",
-				"type": "address"
-			}
-		],
-		"name": "registered",
+		"inputs": [],
+		"name": "commitmentphase",
 		"outputs": [
 			{
 				"name": "",
@@ -282,25 +219,11 @@ var abi = [
 				"type": "address"
 			}
 		],
-		"name": "refunds",
+		"name": "eligible",
 		"outputs": [
 			{
 				"name": "",
-				"type": "uint256"
-			}
-		],
-		"payable": false,
-		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"constant": true,
-		"inputs": [],
-		"name": "state",
-		"outputs": [
-			{
-				"name": "",
-				"type": "uint8"
+				"type": "bool"
 			}
 		],
 		"payable": false,
@@ -329,11 +252,187 @@ var abi = [
 	{
 		"constant": true,
 		"inputs": [],
+		"name": "getVoter",
+		"outputs": [
+			{
+				"name": "_registeredkey",
+				"type": "uint256"
+			},
+			{
+				"name": "_reconstructedkey",
+				"type": "uint256"
+			},
+			{
+				"name": "_commitment",
+				"type": "bytes32"
+			}
+		],
+		"payable": false,
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"constant": true,
+		"inputs": [],
+		"name": "question",
+		"outputs": [
+			{
+				"name": "",
+				"type": "string"
+			}
+		],
+		"payable": false,
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"constant": true,
+		"inputs": [
+			{
+				"name": "",
+				"type": "address"
+			}
+		],
+		"name": "refunds",
+		"outputs": [
+			{
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"payable": false,
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"constant": true,
+		"inputs": [
+			{
+				"name": "",
+				"type": "address"
+			}
+		],
+		"name": "registered",
+		"outputs": [
+			{
+				"name": "",
+				"type": "bool"
+			}
+		],
+		"payable": false,
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"constant": true,
+		"inputs": [],
+		"name": "state",
+		"outputs": [
+			{
+				"name": "",
+				"type": "uint8"
+			}
+		],
+		"payable": false,
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"constant": true,
+		"inputs": [],
+		"name": "totalcommitted",
+		"outputs": [
+			{
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"payable": false,
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"constant": true,
+		"inputs": [],
+		"name": "totaleligible",
+		"outputs": [
+			{
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"payable": false,
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"constant": true,
+		"inputs": [],
 		"name": "totalregistered",
 		"outputs": [
 			{
 				"name": "",
 				"type": "uint256"
+			}
+		],
+		"payable": false,
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"constant": true,
+		"inputs": [],
+		"name": "totalvoted",
+		"outputs": [
+			{
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"payable": false,
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"constant": true,
+		"inputs": [
+			{
+				"name": "xG",
+				"type": "uint256"
+			},
+			{
+				"name": "r",
+				"type": "uint256"
+			},
+			{
+				"name": "vG",
+				"type": "uint256"
+			}
+		],
+		"name": "verifyZKP",
+		"outputs": [
+			{
+				"name": "",
+				"type": "bool"
+			}
+		],
+		"payable": false,
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"constant": true,
+		"inputs": [
+			{
+				"name": "",
+				"type": "address"
+			}
+		],
+		"name": "votecast",
+		"outputs": [
+			{
+				"name": "",
+				"type": "bool"
 			}
 		],
 		"payable": false,
@@ -374,89 +473,10 @@ var abi = [
 		"payable": false,
 		"stateMutability": "view",
 		"type": "function"
-	},
-	{
-		"constant": true,
-		"inputs": [
-			{
-				"name": "",
-				"type": "uint256"
-			}
-		],
-		"name": "addresses",
-		"outputs": [
-			{
-				"name": "",
-				"type": "address"
-			}
-		],
-		"payable": false,
-		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"constant": false,
-		"inputs": [
-			{
-				"name": "xG",
-				"type": "uint256"
-			},
-			{
-				"name": "vG",
-				"type": "uint256"
-			},
-			{
-				"name": "r",
-				"type": "uint256"
-			}
-		],
-		"name": "register",
-		"outputs": [
-			{
-				"name": "",
-				"type": "bool"
-			}
-		],
-		"payable": false,
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"constant": true,
-		"inputs": [
-			{
-				"name": "xG",
-				"type": "uint256"
-			},
-			{
-				"name": "r",
-				"type": "uint256"
-			},
-			{
-				"name": "vG",
-				"type": "uint256"
-			}
-		],
-		"name": "verifyZKP",
-		"outputs": [
-			{
-				"name": "",
-				"type": "bool"
-			}
-		],
-		"payable": false,
-		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"inputs": [],
-		"payable": false,
-		"stateMutability": "nonpayable",
-		"type": "constructor"
 	}
 ];
 var myvoting = web3.eth.contract(abi);
-var myvotingAddr = myvoting.at("0x309d47ec3b3982e13638da74adf0f47f9acad214");
+var myvotingAddr = myvoting.at("0x72c1b2c41aef4a34b9a5e54befe660d0add598b3");
 
 var addressChosen = true;
 var addr = "0x5a702815b36671631d134cbfe4eae186c8351141";
@@ -566,6 +586,37 @@ function beginRegistration() {
   }
 }
 
+// Tell Ethereum to compute Tally
+function tally() {
+
+	// Ethereum Account needs to be unlocked.
+	if(!addressChosen) {
+		alert("Please unlock your Ethereum address");
+		return;
+	}
+
+	// Make sure we are in the correct phase.
+	if(state != 3) {
+		alert("Please wait until VOTE Phase");
+		return;
+	}
+	var reg = myvotingAddr.totalregistered();
+	var voted = myvotingAddr.totalvoted();
+
+	// Make sure everyone has voted!
+	if(!reg.equals(voted)) {
+		alert("Please wait for everyone to vote");
+		return;
+	}
+
+	//TODO: Check that all votes have been cast..
+	// Can do this by checking the public 'votecast' mapping...
+	//web3.personal.unlockAccount(web3.eth.accounts[accountindex],password);
+	var res = myvotingAddr.computeTally.sendTransaction({from:web3.eth.accounts[accountindex], gas: 4200000});
+	document.getElementById("tallybutton").innerHTML  = "Waiting for Ethereum to confirm tally";
+	//txlist("Compute Tally: " + res);
+}
+
 function createFinishRegistration() {
 
   if(!finishRegistrationCreated) {
@@ -615,6 +666,7 @@ function createCommit() {
 
   if(!commitCreate) {
     commitCreate = true;
+	document.getElementById('eligible').setAttribute("hidden", true);
     document.getElementById('commit').removeAttribute("hidden");
     document.getElementById('finishRegistration').setAttribute("hidden",true);
     document.getElementById('section_desc').innerHTML = "Waiting for voters to submit a commitment, but not reveal their encrypted vote to Etheruem. ";
@@ -623,6 +675,50 @@ function createCommit() {
   // Keep track of how many voters have been set as eligible.
   document.getElementById('totalcommit').innerHTML = myvotingAddr.totalcommitted() + "/" + myvotingAddr.totalregistered() + " voters have sealed their vote.";
 
+}
+
+function createVote() {
+
+  if(!voteCreate) {
+    voteCreate = true;
+	document.getElementById('eligible').setAttribute("hidden", true);
+    document.getElementById('commit').setAttribute("hidden", true);
+    document.getElementById('finishRegistration').setAttribute("hidden",true);
+    document.getElementById('votephase').removeAttribute("hidden");
+    document.getElementById('section_desc').innerHTML = "";
+    //controlTransition("#pb_cast");
+  }
+
+  document.getElementById('totalvoters').innerHTML = myvotingAddr.totalvoted() + "/" + myvotingAddr.totalregistered() + " voters have cast their vote.";
+}
+
+function createTally() {
+
+	if(!tallyCreate) {
+		tallyCreate = true;
+
+		//document.getElementById('tally').removeAttribute("hidden");
+
+		// var res1 = anonymousvotingAddr.totalregistered().eq(anonymousvotingAddr.totalvoted());
+		// var res2 = !anonymousvotingAddr.totalregistered().eq(new BigNumber("0"));
+		// alert(res1 + " " + res2);
+
+		if((myvotingAddr.totalregistered().eq(myvotingAddr.totalvoted())) && !myvotingAddr.totalregistered().eq(0)) {
+			var yes = myvotingAddr.finaltally(0);
+			var total = myvotingAddr.finaltally(1);
+			var no = total - yes;
+			document.getElementById("section_desc").innerHTML = "Yes = " + yes + " and No = " + no;
+		} else {
+			document.getElementById("section_desc").innerHTML = "Voting has been cancelled.";
+		}
+
+		document.getElementById('eligible').setAttribute("hidden", true);
+		document.getElementById('votephase').setAttribute("hidden",true);
+		document.getElementById('finishRegistration').setAttribute("hidden", true);
+		document.getElementById('commit').setAttribute("hidden", true);
+
+		//controlTransition("#pb_tally");
+	}
 }
 
 // Responsible for updating the website's text depending on the election's current phase. (i.e. if we are in VOTE, no point enabling compute button).

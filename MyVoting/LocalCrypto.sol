@@ -1,4 +1,4 @@
-pragma solidity ^0.4.20;
+pragma solidity ^0.4.21;
 
 /**
  * @title ECCMath_noconflict
@@ -168,5 +168,11 @@ contract LocalCrypto {
         } else {
             return false;
         }
+    }
+    
+    function createVote(uint yG, uint x, uint v) public view returns (uint y){
+        uint xyG = ECCMath_noconflict.expmod(yG, x, p);
+        uint vG = ECCMath_noconflict.expmod(g, v, p);
+        y = mulmod(xyG, vG, p);
     }
 }

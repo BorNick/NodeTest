@@ -5,6 +5,9 @@ var x = 5;
 var xG = 10;
 
 var registrationCreated = false;
+var commitCreated = false;
+var voteCreated = false;
+var tallyCreated = false;
 
 if (typeof web3 !== 'undefined') {
   web3 = new Web3(web3.currentProvider);
@@ -16,14 +19,18 @@ if (typeof web3 !== 'undefined') {
 
 var abi = [
 	{
-		"constant": true,
+		"constant": false,
 		"inputs": [
 			{
-				"name": "",
-				"type": "address"
+				"name": "_question",
+				"type": "string"
+			},
+			{
+				"name": "enableCommitmentPhase",
+				"type": "bool"
 			}
 		],
-		"name": "eligible",
+		"name": "beginSignUp",
 		"outputs": [
 			{
 				"name": "",
@@ -31,7 +38,7 @@ var abi = [
 			}
 		],
 		"payable": false,
-		"stateMutability": "view",
+		"stateMutability": "nonpayable",
 		"type": "function"
 	},
 	{
@@ -44,42 +51,9 @@ var abi = [
 		"type": "function"
 	},
 	{
-		"constant": true,
-		"inputs": [
-			{
-				"name": "",
-				"type": "address"
-			}
-		],
-		"name": "addressid",
-		"outputs": [
-			{
-				"name": "",
-				"type": "uint256"
-			}
-		],
-		"payable": false,
-		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"constant": true,
+		"constant": false,
 		"inputs": [],
-		"name": "totaleligible",
-		"outputs": [
-			{
-				"name": "",
-				"type": "uint256"
-			}
-		],
-		"payable": false,
-		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"constant": true,
-		"inputs": [],
-		"name": "commitmentphase",
+		"name": "finishRegistrationPhase",
 		"outputs": [
 			{
 				"name": "",
@@ -87,21 +61,34 @@ var abi = [
 			}
 		],
 		"payable": false,
-		"stateMutability": "view",
+		"stateMutability": "nonpayable",
 		"type": "function"
 	},
 	{
-		"constant": true,
-		"inputs": [],
-		"name": "question",
+		"constant": false,
+		"inputs": [
+			{
+				"name": "xG",
+				"type": "uint256"
+			},
+			{
+				"name": "vG",
+				"type": "uint256"
+			},
+			{
+				"name": "r",
+				"type": "uint256"
+			}
+		],
+		"name": "register",
 		"outputs": [
 			{
 				"name": "",
-				"type": "string"
+				"type": "bool"
 			}
 		],
 		"payable": false,
-		"stateMutability": "view",
+		"stateMutability": "nonpayable",
 		"type": "function"
 	},
 	{
@@ -134,39 +121,7 @@ var abi = [
 	},
 	{
 		"constant": false,
-		"inputs": [],
-		"name": "finishRegistrationPhase",
-		"outputs": [
-			{
-				"name": "",
-				"type": "bool"
-			}
-		],
-		"payable": false,
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"constant": true,
-		"inputs": [],
-		"name": "totalcommitted",
-		"outputs": [
-			{
-				"name": "",
-				"type": "uint256"
-			}
-		],
-		"payable": false,
-		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"constant": false,
 		"inputs": [
-			{
-				"name": "params",
-				"type": "uint256[4]"
-			},
 			{
 				"name": "y",
 				"type": "uint256"
@@ -184,18 +139,24 @@ var abi = [
 		"type": "function"
 	},
 	{
+		"inputs": [],
+		"payable": false,
+		"stateMutability": "nonpayable",
+		"type": "constructor"
+	},
+	{
 		"constant": true,
 		"inputs": [
 			{
 				"name": "",
-				"type": "address"
+				"type": "uint256"
 			}
 		],
-		"name": "votecast",
+		"name": "addresses",
 		"outputs": [
 			{
 				"name": "",
-				"type": "bool"
+				"type": "address"
 			}
 		],
 		"payable": false,
@@ -204,8 +165,13 @@ var abi = [
 	},
 	{
 		"constant": true,
-		"inputs": [],
-		"name": "totalvoted",
+		"inputs": [
+			{
+				"name": "",
+				"type": "address"
+			}
+		],
+		"name": "addressid",
 		"outputs": [
 			{
 				"name": "",
@@ -214,29 +180,6 @@ var abi = [
 		],
 		"payable": false,
 		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"constant": false,
-		"inputs": [
-			{
-				"name": "_question",
-				"type": "string"
-			},
-			{
-				"name": "enableCommitmentPhase",
-				"type": "bool"
-			}
-		],
-		"name": "beginSignUp",
-		"outputs": [
-			{
-				"name": "",
-				"type": "bool"
-			}
-		],
-		"payable": false,
-		"stateMutability": "nonpayable",
 		"type": "function"
 	},
 	{
@@ -260,13 +203,8 @@ var abi = [
 	},
 	{
 		"constant": true,
-		"inputs": [
-			{
-				"name": "",
-				"type": "address"
-			}
-		],
-		"name": "registered",
+		"inputs": [],
+		"name": "commitmentphase",
 		"outputs": [
 			{
 				"name": "",
@@ -285,25 +223,11 @@ var abi = [
 				"type": "address"
 			}
 		],
-		"name": "refunds",
+		"name": "eligible",
 		"outputs": [
 			{
 				"name": "",
-				"type": "uint256"
-			}
-		],
-		"payable": false,
-		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"constant": true,
-		"inputs": [],
-		"name": "state",
-		"outputs": [
-			{
-				"name": "",
-				"type": "uint8"
+				"type": "bool"
 			}
 		],
 		"payable": false,
@@ -332,11 +256,187 @@ var abi = [
 	{
 		"constant": true,
 		"inputs": [],
+		"name": "getVoter",
+		"outputs": [
+			{
+				"name": "_registeredkey",
+				"type": "uint256"
+			},
+			{
+				"name": "_reconstructedkey",
+				"type": "uint256"
+			},
+			{
+				"name": "_commitment",
+				"type": "bytes32"
+			}
+		],
+		"payable": false,
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"constant": true,
+		"inputs": [],
+		"name": "question",
+		"outputs": [
+			{
+				"name": "",
+				"type": "string"
+			}
+		],
+		"payable": false,
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"constant": true,
+		"inputs": [
+			{
+				"name": "",
+				"type": "address"
+			}
+		],
+		"name": "refunds",
+		"outputs": [
+			{
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"payable": false,
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"constant": true,
+		"inputs": [
+			{
+				"name": "",
+				"type": "address"
+			}
+		],
+		"name": "registered",
+		"outputs": [
+			{
+				"name": "",
+				"type": "bool"
+			}
+		],
+		"payable": false,
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"constant": true,
+		"inputs": [],
+		"name": "state",
+		"outputs": [
+			{
+				"name": "",
+				"type": "uint8"
+			}
+		],
+		"payable": false,
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"constant": true,
+		"inputs": [],
+		"name": "totalcommitted",
+		"outputs": [
+			{
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"payable": false,
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"constant": true,
+		"inputs": [],
+		"name": "totaleligible",
+		"outputs": [
+			{
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"payable": false,
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"constant": true,
+		"inputs": [],
 		"name": "totalregistered",
 		"outputs": [
 			{
 				"name": "",
 				"type": "uint256"
+			}
+		],
+		"payable": false,
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"constant": true,
+		"inputs": [],
+		"name": "totalvoted",
+		"outputs": [
+			{
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"payable": false,
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"constant": true,
+		"inputs": [
+			{
+				"name": "xG",
+				"type": "uint256"
+			},
+			{
+				"name": "r",
+				"type": "uint256"
+			},
+			{
+				"name": "vG",
+				"type": "uint256"
+			}
+		],
+		"name": "verifyZKP",
+		"outputs": [
+			{
+				"name": "",
+				"type": "bool"
+			}
+		],
+		"payable": false,
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"constant": true,
+		"inputs": [
+			{
+				"name": "",
+				"type": "address"
+			}
+		],
+		"name": "votecast",
+		"outputs": [
+			{
+				"name": "",
+				"type": "bool"
 			}
 		],
 		"payable": false,
@@ -377,87 +477,9 @@ var abi = [
 		"payable": false,
 		"stateMutability": "view",
 		"type": "function"
-	},
-	{
-		"constant": true,
-		"inputs": [
-			{
-				"name": "",
-				"type": "uint256"
-			}
-		],
-		"name": "addresses",
-		"outputs": [
-			{
-				"name": "",
-				"type": "address"
-			}
-		],
-		"payable": false,
-		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"constant": false,
-		"inputs": [
-			{
-				"name": "xG",
-				"type": "uint256"
-			},
-			{
-				"name": "vG",
-				"type": "uint256"
-			},
-			{
-				"name": "r",
-				"type": "uint256"
-			}
-		],
-		"name": "register",
-		"outputs": [
-			{
-				"name": "",
-				"type": "bool"
-			}
-		],
-		"payable": false,
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"constant": true,
-		"inputs": [
-			{
-				"name": "xG",
-				"type": "uint256"
-			},
-			{
-				"name": "r",
-				"type": "uint256"
-			},
-			{
-				"name": "vG",
-				"type": "uint256"
-			}
-		],
-		"name": "verifyZKP",
-		"outputs": [
-			{
-				"name": "",
-				"type": "bool"
-			}
-		],
-		"payable": false,
-		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"inputs": [],
-		"payable": false,
-		"stateMutability": "nonpayable",
-		"type": "constructor"
 	}
 ];
+
 var abi_crypto = [
 	{
 		"constant": false,
@@ -484,6 +506,33 @@ var abi_crypto = [
 		],
 		"payable": false,
 		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"constant": true,
+		"inputs": [
+			{
+				"name": "yG",
+				"type": "uint256"
+			},
+			{
+				"name": "x",
+				"type": "uint256"
+			},
+			{
+				"name": "v",
+				"type": "uint256"
+			}
+		],
+		"name": "createVote",
+		"outputs": [
+			{
+				"name": "y",
+				"type": "uint256"
+			}
+		],
+		"payable": false,
+		"stateMutability": "view",
 		"type": "function"
 	},
 	{
@@ -590,11 +639,11 @@ var abi_crypto = [
 
 // MyVoting Contract
 var myvoting = web3.eth.contract(abi);
-var myvotingAddr = myvoting.at("0x309d47ec3b3982e13638da74adf0f47f9acad214");
+var myvotingAddr = myvoting.at("0x72c1b2c41aef4a34b9a5e54befe660d0add598b3");
 
 // Local Crypto Contract
 var crypto_contract = web3.eth.contract(abi_crypto);
-var cryptoAddr = crypto_contract.at("0xefa4dac5f73fc85bba9e0acb3b6fc8a945b46069");
+var cryptoAddr = crypto_contract.at("0x712a4a8c670670a47461293b3fbb0b68e210e7b2");
 
     var password = "";
     var accounts_index;
@@ -607,8 +656,8 @@ function selectBox() {
 
     // Only run if user has not yet chosen an Ethereum address.
     if (!addressChosen) {
-		document.getElementById('registerbutton').setAttribute("hidden", true);
-		document.getElementById('totalregistered').setAttribute("hidden", true);
+		hideAll();
+		document.getElementById('dropdown').removeAttribute("hidden");
         var listEligible = "";
         var foundEligible = false;
         // Let user select one of their Ethereum addresses
@@ -631,7 +680,6 @@ function selectBox() {
 }
 	
 function unlock() {
-	console.log("entered unlock");
     var _addr = $('#addrs').find(":selected").text();
     var _password = document.getElementById('passwordf').value;
     document.getElementById('passwordf').value = "";
@@ -642,7 +690,6 @@ function unlock() {
         addr = _addr;
         password = _password;
         accounts_index = $("#addrs").val();
-		console.log(accounts_index);
         //controlTransition("#unlockfs", null);
         //document.getElementById('generalStatus').innerHTML = "You have selected the address " + addr;
 		currentState();
@@ -706,45 +753,237 @@ function register() {
             gas: 4200000
         });
 
-        document.getElementById("registerbutton").innerHTML  = "Waiting for registration to end";
+        document.getElementById("registration").innerHTML  = "Waiting for registration to end";
 		createRegistration();
 
     } else {
         alert("Registration failed... Problem could be your voting codes or that you have already registered");
     }
 }
+
+function vote(choice) {
+
+    if (!addressChosen) {
+        alert("Please unlock your Ethereum address");
+        return;
+    }
+
+    // Lets make sure they are registered too...
+    if (!myvotingAddr.registered(addr)) {
+        alert("You are not registered for this vote");
+        return;
+    }
+    // SETUP, SIGNUP, TALLY
+    if (state == 0 || state == 1 || state == 4 ) {
+        alert("You can only vote during the COMMITMENT or VOTE phase");
+        return;
+    }
+
+    var choice_text;
+
+    // Get xG and yG (only way to get values from a Struct)
+    var voter = myvotingAddr.getVoter.call({
+        from: web3.eth.accounts[accounts_index]
+    });
+
+    var xG = voter[0];
+    var yG = voter[1];
 	
+	var result;
+	var y;//!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+    if (choice == 1) {
+        choice_text = "YES";
+        //result = cryptoAddr.create1outof2ZKPYesVote.call(xG, yG, w, r, d, x, {
+        //    from: web3.eth.accounts[accounts_index]
+        //});
+		y = cryptoAddr.createVote.call(yG, x, 1, {
+            from: web3.eth.accounts[accounts_index]
+        });
+    } else {
+        choice_text = "NO";
+        //result = cryptoAddr.create1outof2ZKPNoVote.call(xG, yG, w, r, d, x, {
+        //    from: web3.eth.accounts[accounts_index]
+        //});
+		y = cryptoAddr.createVote.call(yG, x, 0, {
+            from: web3.eth.accounts[accounts_index]
+        });
+    }
+
+
+
+    //var y = [result[0][0], result[0][1]];
+    //var a1 = [result[0][2], result[0][3]];
+    //var b1 = [result[0][4], result[0][5]];
+    //var a2 = [result[0][6], result[0][7]];
+    //var b2 = [result[0][8], result[0][9]];
+
+    //var params = [result[1][0], result[1][1], result[1][2], result[1][3]];
+    //result = anonymousvotingAddr.verify1outof2ZKP.call(params, y, a1, b1, a2, b2, {
+    //    from: web3.eth.accounts[accounts_index]
+    //});
+
+    // Let's make sure the zero knowledge proof checked out...
+    if (true) {//result) {
+
+        var castvote = false;
+
+        // We either send a commitment to the vote, or the vote itself!
+        if (state == 2) {
+
+            if (!myvotingAddr.commitmentphase()) {
+                castvote = true;
+            } else if (confirm("You are voting " + choice_text + "... You will not be able to change your vote")) {
+                castvote = true;
+            }
+
+            if (castvote) {
+                //web3.personal.unlockAccount(addr, password);
+
+                // Get us a hash commitment to the voter's zero knowledge proof
+                var h = cryptoAddr.commitToVote.call(/*params, */xG, yG, y/*, a1, b1, a2, b2*/, {
+                    from: web3.eth.accounts[accounts_index]
+                });
+
+                // Send commitment to Etherum!
+                result = myvotingAddr.submitCommitment.sendTransaction(h, {
+                    from: web3.eth.accounts[accounts_index],
+                    gas: 4200000
+                });
+                document.getElementById('commit').innerHTML = 'You have sent (but not revealed) your vote... Waiting for Ethereum to confirm';
+            }
+
+        } else if (state == 3) {
+
+            // No need to ask the user to confirm if they have already committed to it...
+            if (myvotingAddr.commitmentphase()) {
+                castvote = true;
+            } else if (confirm("You are voting " + choice_text + ". You will not be able to change your vote.")) {
+                 castvote = true;
+            }
+
+            // Should we broadcast the vote?
+            if (castvote) {
+                //web3.personal.unlockAccount(addr, password);
+                result = myvotingAddr.submitVote.sendTransaction(/*params, */y/*, a1, b1, a2, b2*/, {
+                    from: web3.eth.accounts[accounts_index],
+                    gas: 4200000
+                });
+                document.getElementById('do_vote').innerHTML = 'Vote has been submitted... Waiting for confirmation';
+            }
+        }
+    } else {
+        alert("Vote was not computed successfully... Please check that you have uploaded the correct voting codes and unlocked the correct account");
+    }
+}
+	
+function whatIsQuestion() {
+    document.getElementById('question').innerHTML = myvotingAddr.question();
+	document.getElementById('question').removeAttribute("hidden");
+}
+	
+function hideAll(){
+	document.getElementById('dropdown').setAttribute("hidden", true);
+	document.getElementById('registration').setAttribute("hidden", true);
+	document.getElementById('question').setAttribute("hidden", true);
+	//document.getElementById('totalregistered').setAttribute("hidden", true);
+	document.getElementById('commit').setAttribute("hidden", true);
+	document.getElementById('do_vote').setAttribute("hidden", true);
+	document.getElementById('tally').setAttribute("hidden", true);
+}
 
 function createRegistration() {
 
 	if(!registrationCreated) {
+		hideAll();
 		registrationCreated = true;
 		//  document.getElementById('title').innerHTML = "Voter Registration";
 
-		document.getElementById('registerbutton').removeAttribute("hidden");
+		document.getElementById('registration').removeAttribute("hidden");
 		document.getElementById('question').removeAttribute("hidden");
-		document.getElementById('totalregistered').removeAttribute("hidden");
+		//document.getElementById('totalregistered').removeAttribute("hidden");
 	}
 
 	// Make sure it exists... We might be in the 'Please wait on Ethereum' part.
 	if(document.getElementById('totalregistered') != null) {
 		document.getElementById('totalregistered').innerHTML = "" + myvotingAddr.totalregistered() + "/" + myvotingAddr.totaleligible() + " voters have registered their ballot.";
+	}
+}
 
-		// Statistics on number of registered voters, and when authority can transition to the next phase
+function createCommit() {
+
+	if(!commitCreated) {
+		hideAll();
+		commitCreated = true;
+		//  document.getElementById('title').innerHTML = "Voter Commitment";
+
+		document.getElementById('commit').removeAttribute("hidden");
+		document.getElementById('question').removeAttribute("hidden");
+	}
+
+	// Make sure it exists... We might be in the 'Please wait on Ethereum' part.
+	if(document.getElementById('commit') != null) {
+		if(myvotingAddr.commitment(addr)){
+			document.getElementById('commit').innerHTML = 'You have sent (but not revealed) your vote... Waiting for Ethereum to confirm';
+		}
+	}
+}
+
+function createVote() {
+
+	if(!voteCreated) {
+		hideAll();
+		voteCreated = true;
+		//  document.getElementById('title').innerHTML = "Voting";
+
+		document.getElementById('do_vote').removeAttribute("hidden");
+		document.getElementById('question').removeAttribute("hidden");
+	}
+
+	// Make sure it exists... We might be in the 'Please wait on Ethereum' part.
+	if(document.getElementById('do_vote') != null) {
+		if(myvotingAddr.votecast(addr)){
+			document.getElementById('do_vote').innerHTML = 'Vote has been submitted... Waiting for confirmation';
+		}
+	}
+}
+
+function createTally() {
+
+	if(!tallyCreated) {
+		hideAll();
+		tallyCreated = true;
+		//  document.getElementById('title').innerHTML = "Voting";
+
+		document.getElementById('tally').removeAttribute("hidden");
+		document.getElementById('question').removeAttribute("hidden");
+	}
+
+	// Make sure it exists... We might be in the 'Please wait on Ethereum' part.
+	if((myvotingAddr.totalregistered().eq(myvotingAddr.totalvoted())) && !myvotingAddr.totalregistered().eq(0)) {
+		var yes = myvotingAddr.finaltally(0);
+		var total = myvotingAddr.finaltally(1);
+		var no = total - yes;
+		document.getElementById("tally").innerHTML = "Yes = " + yes + " and No = " + no;
+	} else {
+		document.getElementById("tally").innerHTML = "Voting has been cancelled.";
 	}
 }
 	
 // Responsible for updating the website's text depending on the election's current phase. (i.e. if we are in VOTE, no point enabling compute button).
 function currentState() {
+	//hideAll();
 	if (!addressChosen) {
 		selectBox();
 		return;
 	}
 	
-	document.getElementById('dropdown').setAttribute("hidden", true);
+	
 
 	state = myvotingAddr.state();
-	//whatIsQuestion();
+	if(state > 1){
+		whatIsQuestion();
+	}
 
 	if(state == 0) { // SETUP
 

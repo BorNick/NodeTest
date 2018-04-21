@@ -16,10 +16,24 @@
             <br>
             <p>None of your Ethereum accounts are eligible to vote...</p>
         </div>
-		<p id="totalregistered"></p>
-		<div id="registerbutton">
+		<div id="registration">
+			<p id="totalregistered"></p>
 			<button onclick="register()" class="btn btn-secondary">register</button>
 		</div>
+		<div id="commit">
+			<p>Your vote to send commitment</p>
+			<br>
+			<button onclick="vote(1)" class="action-button">Yes</button>
+            <button onclick="vote(0)" class="action-button">No</button>
+        </div>
+		<div id="do_vote">
+			<p>Your vote to send(it MUST be the same as in the commit phase if it occured)</p>
+			<br>
+            <button onclick="vote(1)" class="action-button">Yes</button>
+            <button onclick="vote(0)" class="action-button">No</button>
+        </div>
+        <div id="tally">
+        </div>
 		<script src= "voter.js"></script>
 	</body>
 	<script src="js/jquery.min.js"></script>

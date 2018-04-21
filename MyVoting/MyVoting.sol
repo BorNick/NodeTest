@@ -134,6 +134,14 @@ contract MyVoting is owned {
         uint vote;
     }
     
+    // Work around function to fetch details about a voter
+    function getVoter() view public returns (uint _registeredkey, uint _reconstructedkey, bytes32 _commitment){
+        uint index = addressid[msg.sender];
+        _registeredkey = voters[index].registeredkey;
+        _reconstructedkey = voters[index].reconstructedkey;
+        _commitment = voters[index].commitment;
+    }
+    
     uint public totalregistered; //Total number of participants that have submited a voting key
     uint public totaleligible;
     uint public totalcommitted;
@@ -338,6 +346,7 @@ contract MyVoting is owned {
             }
         }
         finaltally[1] = totalregistered;
+        state = State.FINISHED;
     }
     
     function verifyZKP(uint xG, uint r, uint vG) public view returns (bool){
