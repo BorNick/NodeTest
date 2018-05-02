@@ -231,11 +231,11 @@ contract MyVoting is owned {
         for(uint i = 0; i < totalregistered; i++){
             beforei = 1;
             for(uint j = 0; j < i; j++){
-                beforei = mulmod(beforei, voters[i].registeredkey, p);
+                beforei = mulmod(beforei, voters[j].registeredkey, p);
             }
             afteri = 1;
             for(j = i + 1; j < totalregistered; j++){
-                afteri = mulmod(afteri, voters[i].registeredkey, p);
+                afteri = mulmod(afteri, voters[j].registeredkey, p);
             }
             if(afteri != 1){
                 temp = ECCMath.invmod(afteri, p);

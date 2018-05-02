@@ -2,12 +2,17 @@
 <html>
 	<head>
 		<title>Voter page</title>
+		<link href="css\bootstrap.min.css" rel="stylesheet">
+		<script src="js\web3.js"></script>
+		<script src="js\jquery.min.js"></script>
+		<script src="js\bootstrap.min.js"></script>
 	</head>
 	<body>
-		<script src="web3\web3.js"></script>
 		
-		<p id="question"></p>
-        <div id="dropdown">
+		<div id="info" class="container">
+			<p id="question" class="text-body"></p>
+		</div>
+        <div id="dropdown" class="container">
             <p>Address:</p>
             <select id='addrs' class="action-list">
                <option value='0'>None</option>
@@ -16,25 +21,33 @@
             <br>
             <p>None of your Ethereum accounts are eligible to vote...</p>
         </div>
-		<div id="registration">
+		<div id="keys" class="container">
+			<p>If you have already uploaded your keys enter them.</p>
+			<p>If you haven't uploaded your keys, you can generate them randomly and save somewhere.</p>
+			<button onclick="generateKeys()" class="btn btn-primary">Generate keys</button>
+			<br><br>
+			<p>X: <input type='number' min = '1' id='xkey'/> </p>
+			<p>V: <input type='number' min = '1' id='vkey'/> </p>
+			<button onclick="uploadKeys()" class="btn btn-primary">OK</button>
+		</div>
+		<div id="registration" class="container">
 			<p id="totalregistered"></p>
 			<button onclick="register()" class="btn btn-secondary">register</button>
 		</div>
-		<div id="commit">
+		<div id="commit" class="container">
 			<p>Your vote to send commitment</p>
 			<br>
 			<button onclick="vote(1)" class="action-button">Yes</button>
             <button onclick="vote(0)" class="action-button">No</button>
         </div>
-		<div id="do_vote">
+		<div id="do_vote" class="container">
 			<p>Your vote to send(it MUST be the same as in the commit phase if it occured)</p>
 			<br>
             <button onclick="vote(1)" class="action-button">Yes</button>
             <button onclick="vote(0)" class="action-button">No</button>
         </div>
-        <div id="tally">
+        <div id="tally" class="container">
         </div>
 		<script src= "voter.js"></script>
 	</body>
-	<script src="js/jquery.min.js"></script>
 </html>

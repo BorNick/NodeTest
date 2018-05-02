@@ -2,39 +2,42 @@
 <html>
 	<head>
 		<title>Admin page</title>
+		<link href="css\bootstrap.min.css" rel="stylesheet">
+		<script src="js\web3.js"></script>
+		<script src="js\jquery.min.js"></script>
+		<script src="js\bootstrap.min.js"></script>
 	</head>
 	<body>
-		<script src="web3\web3.js"></script>
-		
-		<p id="section_desc"></p>
-		<p id="question"></p>
-		<div id="eligible">
-			<p id="eligible_area">
-				<textarea id="addresses" name="list" cols="40" rows="5"></textarea>
-				<br>
-				<button onclick="setEligible()" class="btn btn-secondary">Update eligibility list</button>
-			</p>
-			<p><button onclick="finishEligible()" class="btn btn-primary">Next</button></p>
+		<div id="info" class="container">
+			<p id="section_desc" class="text-body"></p>
+			<p id="question" class="text-body"></p>
 		</div>
-		<div hidden id="registrationSetQuestion">
+		
+		<div id="eligible" class="container">
+			<textarea id="addresses" class="form-control" rows="5"></textarea>
+			<br>
+			<button onclick="setEligible()" class="btn btn-secondary">Update eligibility list</button>
+			<br><br>
+			<button onclick="finishEligible()" class="btn btn-primary">Next</button>
+		</div>
+		<div hidden id="registrationSetQuestion" class="container">
 			<p>Question:  <input type='text' id='questioninput' value='Dummy Question?'/> </p>
 			<p><input type="checkbox" id="commitmenttick" checked> Enable the 'Commitment' Phase?</p>
 			<p id="beginRegistrationbutton"><button onclick="beginRegistration()" class="btn btn-primary">Begin Registration Phase</button></p>
         </div>
-		<div hidden id="finishRegistration">
+		<div hidden id="finishRegistration" class="container">
 			<p id="currentRegistration"></p>
 			<p id="finishby"></p>
 			<p id="totalregistered"></p>
 			<button class="btn btn-primary" onclick="finishRegistration()">Finish Registration Phase</button>
         </div>
-		<div hidden id="commit">
+		<div hidden id="commit" class="container">
 			<p id="totalcommit"></p>
         </div>
-		<div hidden id="votephase">
+		<div hidden id="votephase" class="container">
 			<p id="totalvoters"></p>
 			<p id="tallybutton"><button onclick="tally()" class="btn btn-primary">Get Tally</button></p>
         </div>
 		<script src= "admin.js"></script>
 	</body>
-	<script src="js/jquery.min.js"></script>
 </html>

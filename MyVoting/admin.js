@@ -476,7 +476,7 @@ var abi = [
 	}
 ];
 var myvoting = web3.eth.contract(abi);
-var myvotingAddr = myvoting.at("0x72c1b2c41aef4a34b9a5e54befe660d0add598b3");
+var myvotingAddr = myvoting.at("0xb0cf6ec9f9c48a942841483ae3e5df937e6fc4f6");
 
 var addressChosen = true;
 var addr = "0x5a702815b36671631d134cbfe4eae186c8351141";

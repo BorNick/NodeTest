@@ -1,9 +1,13 @@
 var Web3 = require('web3');
 
-var v = 3;//!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-var x = 5;
-var xG = 10;
+var v;// = 3;//!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+var x;// = 5;
+var xG;// = 10;
+var p = 11;
+var g = 6;
 
+var addressChosen = false;
+var keysUploaded = false;
 var registrationCreated = false;
 var commitCreated = false;
 var voteCreated = false;
@@ -639,15 +643,15 @@ var abi_crypto = [
 
 // MyVoting Contract
 var myvoting = web3.eth.contract(abi);
-var myvotingAddr = myvoting.at("0x72c1b2c41aef4a34b9a5e54befe660d0add598b3");
+var myvotingAddr = myvoting.at("0xb0cf6ec9f9c48a942841483ae3e5df937e6fc4f6");
 
 // Local Crypto Contract
 var crypto_contract = web3.eth.contract(abi_crypto);
-var cryptoAddr = crypto_contract.at("0x712a4a8c670670a47461293b3fbb0b68e210e7b2");
+var cryptoAddr = crypto_contract.at("0xe3c288ba66525fead03d4daebb989ee0895c8547");
 
     var password = "";
     var accounts_index;
-	var addressChosen = false;
+	
 	selectBox();
 
 
@@ -677,6 +681,52 @@ function selectBox() {
 
 
     }
+}
+
+function keysInput() {
+	if(!keysUploaded) {
+		hideAll();
+		document.getElementById('keys').removeAttribute("hidden");
+	}
+}
+
+function getRndInteger(min, max) {
+    return Math.floor(Math.random() * (max - min)) + min;
+}
+
+function generateKeys(){
+	document.getElementById('xkey').value = getRndInteger(1, p);
+	document.getElementById('vkey').value = getRndInteger(1, p);
+}
+
+function expmod( base, exp, mod ){
+  if (exp == 0) return 1;
+  if (exp % 2 == 0){
+    return Math.pow( expmod( base, (exp / 2), mod), 2) % mod;
+  }
+  else {
+    return (base * expmod( base, (exp - 1), mod)) % mod;
+  }
+}
+
+function uploadKeys() {
+	if(!keysUploaded) {
+		var _x = document.getElementById('xkey').value;
+		var _v = document.getElementById('vkey').value;
+		if(_x < 1 || _v < 1 || _x >= p, _v >= p){
+			alert('Wrong input');
+			return;
+		} else{
+			keysUploaded = true;
+			x = _x;
+			v = _v;
+			xG = expmod(g, x, p);
+			console.log(x);
+			console.log(v);
+			console.log(xG);
+			currentState();
+		}
+	}
 }
 	
 function unlock() {
@@ -884,6 +934,7 @@ function whatIsQuestion() {
 	
 function hideAll(){
 	document.getElementById('dropdown').setAttribute("hidden", true);
+	document.getElementById('keys').setAttribute("hidden", true);
 	document.getElementById('registration').setAttribute("hidden", true);
 	document.getElementById('question').setAttribute("hidden", true);
 	//document.getElementById('totalregistered').setAttribute("hidden", true);
@@ -977,7 +1028,10 @@ function currentState() {
 		selectBox();
 		return;
 	}
-	
+	if(!keysUploaded) {
+		keysInput();
+		return;
+	}
 	
 
 	state = myvotingAddr.state();
