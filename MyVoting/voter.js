@@ -282,6 +282,20 @@ var abi = [
 	{
 		"constant": true,
 		"inputs": [],
+		"name": "owner",
+		"outputs": [
+			{
+				"name": "",
+				"type": "address"
+			}
+		],
+		"payable": false,
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"constant": true,
+		"inputs": [],
 		"name": "question",
 		"outputs": [
 			{
@@ -643,11 +657,11 @@ var abi_crypto = [
 
 // MyVoting Contract
 var myvoting = web3.eth.contract(abi);
-var myvotingAddr = myvoting.at("0xb0cf6ec9f9c48a942841483ae3e5df937e6fc4f6");
+var myvotingAddr = myvoting.at("0x9aa639cc8862e3004254aa69e953640f33f6c354");
 
 // Local Crypto Contract
 var crypto_contract = web3.eth.contract(abi_crypto);
-var cryptoAddr = crypto_contract.at("0xe3c288ba66525fead03d4daebb989ee0895c8547");
+var cryptoAddr = crypto_contract.at("0xf42b8390bc7bd501b959e68384c739df6a53b6f7");
 
     var password = "";
     var accounts_index;
@@ -735,7 +749,7 @@ function unlock() {
     document.getElementById('passwordf').value = "";
 
 		
-    //if (web3.personal.unlockAccount(_addr, _password)) {
+    if (web3.personal.unlockAccount(_addr, _password)) {
         addressChosen = true;
         addr = _addr;
         password = _password;
@@ -743,10 +757,10 @@ function unlock() {
         //controlTransition("#unlockfs", null);
         //document.getElementById('generalStatus').innerHTML = "You have selected the address " + addr;
 		currentState();
-    //} else {
-      //alert("Password was not correct. Try again.");
-    //}
-    //currentState();
+    } else {
+      alert("Password was not correct. Try again.");
+    }
+    currentState();
 }
 	
 	

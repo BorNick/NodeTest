@@ -7,6 +7,11 @@ if (typeof web3 !== 'undefined') {
   web3 = new Web3(new Web3.providers.HttpProvider("http://localhost:8545"));
 }
 
+var openedLogIn = false;
+var signedIn = false;
+var addressChosen = false;
+var eligibleTextBoxCreated = false;
+var finishedEligible = false;
 var finishRegistrationCreated = false;
 var commitCreate = false;
 var voteCreate = false;
@@ -274,6 +279,20 @@ var abi = [
 	{
 		"constant": true,
 		"inputs": [],
+		"name": "owner",
+		"outputs": [
+			{
+				"name": "",
+				"type": "address"
+			}
+		],
+		"payable": false,
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"constant": true,
+		"inputs": [],
 		"name": "question",
 		"outputs": [
 			{
@@ -476,13 +495,55 @@ var abi = [
 	}
 ];
 var myvoting = web3.eth.contract(abi);
-var myvotingAddr = myvoting.at("0xb0cf6ec9f9c48a942841483ae3e5df937e6fc4f6");
+var myvotingAddr = myvoting.at("0x9aa639cc8862e3004254aa69e953640f33f6c354");
 
-var addressChosen = true;
-var addr = "0x5a702815b36671631d134cbfe4eae186c8351141";
-var accountindex = 0;
+var addr;// = "0x5a702815b36671631d134cbfe4eae186c8351141";
+var accountindex;// = 0;
 var state = 0;
 
+function openLogin() {
+
+	if(!openedLogIn) {
+		openedLogIn = true;
+		document.getElementById('login').removeAttribute("hidden");
+		var selectbox = "<p>Address: <select id='addrs'>";
+
+		var foundOwner = false;
+
+		// Let user select one of their Ethereum addresses
+		for(var i=0; i<web3.eth.accounts.length; i++) {
+
+			if(myvotingAddr.owner() == web3.eth.accounts[i]) {
+				foundOwner = true;
+				selectbox = selectbox + '<option value="' + i + '">' + web3.eth.accounts[i] + '</option>';
+			}
+		}
+
+		selectbox = selectbox + "</select></p>";
+		selectbox = selectbox + "<p>Password: <input type='password' id='passwordf' value='' name='fname'> <button onclick='unlock()' class='btn btn-primary'>Unlock</button> </p>";
+
+		if(foundOwner) {
+			document.getElementById('dropdown').innerHTML = selectbox;
+		} else {
+			document.getElementById('dropdown').innerHTML = "You do not have an Ethereum account that is the Election Authority for this vote";
+		}
+	}
+}
+
+function unlock(callback) {
+	var _addr = $('#addrs').find(":selected").text();
+	var _password = document.getElementById('passwordf').value;
+
+	if(web3.personal.unlockAccount(_addr,_password)) {
+		addressChosen = true;
+		addr = _addr;
+		password = _password;
+		accountindex = $( "#addrs" ).val();
+		signedIn = true;
+		document.getElementById('login').setAttribute("hidden", true);
+		currentState();
+	}
+}
 
 // Check that the user is eligible to vote
 function setEligible() {
@@ -546,6 +607,7 @@ function setEligible() {
 
 function finishEligible() {
   if(myvotingAddr.totaleligible() >= 3) {
+	finishedEligible = true;
     //document.getElementById('title').innerHTML = "The Election Time Table";
     //document.getElementById('section_desc').innerHTML = "";
     document.getElementById('eligible').setAttribute("hidden", true);
@@ -617,13 +679,24 @@ function tally() {
 	//txlist("Compute Tally: " + res);
 }
 
+function createEligibleTextBox() {
+	
+	if(!eligibleTextBoxCreated) {
+		hideAll();
+		if(finishedEligible){
+			document.getElementById('registrationSetQuestion').removeAttribute("hidden");
+		}else{
+			document.getElementById('eligible').removeAttribute("hidden");
+		}
+	}
+}
+
 function createFinishRegistration() {
 
   if(!finishRegistrationCreated) {
      finishRegistrationCreated = true;
     //  document.getElementById('title').innerHTML = "Voter Registration";
-     document.getElementById('eligible').setAttribute("hidden", true);
-     document.getElementById('registrationSetQuestion').setAttribute("hidden", true);
+     hideAll();
      document.getElementById('finishRegistration').removeAttribute("hidden");
      document.getElementById('question').removeAttribute("hidden");
   }
@@ -666,9 +739,8 @@ function createCommit() {
 
   if(!commitCreate) {
     commitCreate = true;
-	document.getElementById('eligible').setAttribute("hidden", true);
+	hideAll();
     document.getElementById('commit').removeAttribute("hidden");
-    document.getElementById('finishRegistration').setAttribute("hidden",true);
     document.getElementById('section_desc').innerHTML = "Waiting for voters to submit a commitment, but not reveal their encrypted vote to Etheruem. ";
   }
 
@@ -681,9 +753,7 @@ function createVote() {
 
   if(!voteCreate) {
     voteCreate = true;
-	document.getElementById('eligible').setAttribute("hidden", true);
-    document.getElementById('commit').setAttribute("hidden", true);
-    document.getElementById('finishRegistration').setAttribute("hidden",true);
+	hideAll();
     document.getElementById('votephase').removeAttribute("hidden");
     document.getElementById('section_desc').innerHTML = "";
     //controlTransition("#pb_cast");
@@ -712,27 +782,34 @@ function createTally() {
 			document.getElementById("section_desc").innerHTML = "Voting has been cancelled.";
 		}
 
-		document.getElementById('eligible').setAttribute("hidden", true);
-		document.getElementById('votephase').setAttribute("hidden",true);
-		document.getElementById('finishRegistration').setAttribute("hidden", true);
-		document.getElementById('commit').setAttribute("hidden", true);
+		hideAll();
 
 		//controlTransition("#pb_tally");
 	}
 }
 
+function hideAll(){
+	document.getElementById('login').setAttribute("hidden", true);
+	document.getElementById('eligible').setAttribute("hidden", true);
+	document.getElementById('registrationSetQuestion').setAttribute("hidden", true);
+	document.getElementById('votephase').setAttribute("hidden",true);
+	document.getElementById('finishRegistration').setAttribute("hidden", true);
+	document.getElementById('commit').setAttribute("hidden", true);
+}
+
 // Responsible for updating the website's text depending on the election's current phase. (i.e. if we are in VOTE, no point enabling compute button).
 function currentState() {
-
-  //openLogin();
-
+	if (!addressChosen) {
+		openLogin();
+		return;
+	}
 
   state = myvotingAddr.state();
   //whatIsQuestion();
 
   if(state == 0) { // SETUP
 
-    //createEligibleTextBox();
+    createEligibleTextBox();
   } else if(state == 1) { // SIGNUP
     createFinishRegistration();
 

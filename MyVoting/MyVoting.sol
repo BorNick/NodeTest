@@ -92,7 +92,7 @@ library ECCMath {
 
 contract owned {
     function owned() public { owner = msg.sender; }
-    address owner;
+    address public owner;
 
     // This contract only defines a modifier but does not use
     // it: it will be used in derived contracts.
