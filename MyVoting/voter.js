@@ -6,6 +6,9 @@ var xG;// = 10;
 var p = 11;
 var g = 6;
 
+var connectedToContract = false;
+var openedContractChoice = false;
+var selectBoxCreated = false;
 var addressChosen = false;
 var keysUploaded = false;
 var registrationCreated = false;
@@ -657,23 +660,42 @@ var abi_crypto = [
 
 // MyVoting Contract
 var myvoting = web3.eth.contract(abi);
-var myvotingAddr = myvoting.at("0x9aa639cc8862e3004254aa69e953640f33f6c354");
+var myvotingAddr;// = myvoting.at("0xfb9e922c6b42dd92f40c860555163895d635467b");
 
 // Local Crypto Contract
 var crypto_contract = web3.eth.contract(abi_crypto);
 var cryptoAddr = crypto_contract.at("0xf42b8390bc7bd501b959e68384c739df6a53b6f7");
 
-    var password = "";
+    var password;// = "";
     var accounts_index;
 	
-	selectBox();
+	//selectBox();
 
+	
+function openContractChoice() {
+	
+	if(!openedContractChoice){
+		openedContractChoice = true;
+		hideAll();
+		document.getElementById('contract').removeAttribute("hidden");
+	}
+}
+
+function connectToContract(){
+	if(!connectedToContract) {
+		connectedToContract = true;
+		document.getElementById("contract_address").innerHTML = document.getElementById("addr").value;
+		myvotingAddr =  myvoting.at(document.getElementById("addr").value);
+		currentState();
+	}
+}
 
 // Fetch all the Ethereum addresses...
 function selectBox() {
 
     // Only run if user has not yet chosen an Ethereum address.
-    if (!addressChosen) {
+    if (!addressChosen && !selectBoxCreated) {
+		selectBoxCreated = true;
 		hideAll();
 		document.getElementById('dropdown').removeAttribute("hidden");
         var listEligible = "";
@@ -947,6 +969,7 @@ function whatIsQuestion() {
 }
 	
 function hideAll(){
+	document.getElementById('contract').setAttribute("hidden", true);
 	document.getElementById('dropdown').setAttribute("hidden", true);
 	document.getElementById('keys').setAttribute("hidden", true);
 	document.getElementById('registration').setAttribute("hidden", true);
@@ -1038,6 +1061,10 @@ function createTally() {
 // Responsible for updating the website's text depending on the election's current phase. (i.e. if we are in VOTE, no point enabling compute button).
 function currentState() {
 	//hideAll();
+	if (!connectedToContract) {
+		openContractChoice();
+		return;
+	}
 	if (!addressChosen) {
 		selectBox();
 		return;

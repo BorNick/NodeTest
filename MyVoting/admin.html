@@ -9,12 +9,22 @@
 	</head>
 	<body>
 		<div id="info" class="container">
+			<p class="text-body">Current smart contract address:</p>
+			<p id="contract_address" class="text-body">Not chosen</p>
 			<p id="section_desc" class="text-body"></p>
 			<p id="question" class="text-body"></p>
 		</div>
 		<div hidden id="login" class="container">
 			<div id='dropdown'></div>
         </div>
+		<div hidden id="contract" class="container">
+			<p class="text-body">Create a new voting smart conract or connect to an existing one by its address</p>
+			<br><br>
+			<button onclick="createContract()" class="btn btn-secondary">Create a new contract</button>
+			<br><br>
+			<input id = "addr" type="text">
+			<button onclick='connectToContract()' class="btn btn-secondary">Connect to a contract</button>
+		</div>
 		<div hidden id="eligible" class="container">
 			<textarea id="addresses" class="form-control" rows="5"></textarea>
 			<br>
