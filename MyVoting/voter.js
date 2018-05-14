@@ -3,6 +3,9 @@ var Web3 = require('web3');
 var v;// = 3;//!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 var x;// = 5;
 var xG;// = 10;
+var w;
+var r;
+var d;
 var p = 11;
 var g = 6;
 
@@ -24,639 +27,9 @@ if (typeof web3 !== 'undefined') {
 }
 
 
-var abi = [
-	{
-		"constant": false,
-		"inputs": [
-			{
-				"name": "_question",
-				"type": "string"
-			},
-			{
-				"name": "enableCommitmentPhase",
-				"type": "bool"
-			}
-		],
-		"name": "beginSignUp",
-		"outputs": [
-			{
-				"name": "",
-				"type": "bool"
-			}
-		],
-		"payable": false,
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"constant": false,
-		"inputs": [],
-		"name": "computeTally",
-		"outputs": [],
-		"payable": false,
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"constant": false,
-		"inputs": [],
-		"name": "finishRegistrationPhase",
-		"outputs": [
-			{
-				"name": "",
-				"type": "bool"
-			}
-		],
-		"payable": false,
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"constant": false,
-		"inputs": [
-			{
-				"name": "xG",
-				"type": "uint256"
-			},
-			{
-				"name": "vG",
-				"type": "uint256"
-			},
-			{
-				"name": "r",
-				"type": "uint256"
-			}
-		],
-		"name": "register",
-		"outputs": [
-			{
-				"name": "",
-				"type": "bool"
-			}
-		],
-		"payable": false,
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"constant": false,
-		"inputs": [
-			{
-				"name": "addr",
-				"type": "address[]"
-			}
-		],
-		"name": "setEligible",
-		"outputs": [],
-		"payable": false,
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"constant": false,
-		"inputs": [
-			{
-				"name": "h",
-				"type": "bytes32"
-			}
-		],
-		"name": "submitCommitment",
-		"outputs": [],
-		"payable": false,
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"constant": false,
-		"inputs": [
-			{
-				"name": "y",
-				"type": "uint256"
-			}
-		],
-		"name": "submitVote",
-		"outputs": [
-			{
-				"name": "",
-				"type": "bool"
-			}
-		],
-		"payable": false,
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"inputs": [],
-		"payable": false,
-		"stateMutability": "nonpayable",
-		"type": "constructor"
-	},
-	{
-		"constant": true,
-		"inputs": [
-			{
-				"name": "",
-				"type": "uint256"
-			}
-		],
-		"name": "addresses",
-		"outputs": [
-			{
-				"name": "",
-				"type": "address"
-			}
-		],
-		"payable": false,
-		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"constant": true,
-		"inputs": [
-			{
-				"name": "",
-				"type": "address"
-			}
-		],
-		"name": "addressid",
-		"outputs": [
-			{
-				"name": "",
-				"type": "uint256"
-			}
-		],
-		"payable": false,
-		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"constant": true,
-		"inputs": [
-			{
-				"name": "",
-				"type": "address"
-			}
-		],
-		"name": "commitment",
-		"outputs": [
-			{
-				"name": "",
-				"type": "bool"
-			}
-		],
-		"payable": false,
-		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"constant": true,
-		"inputs": [],
-		"name": "commitmentphase",
-		"outputs": [
-			{
-				"name": "",
-				"type": "bool"
-			}
-		],
-		"payable": false,
-		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"constant": true,
-		"inputs": [
-			{
-				"name": "",
-				"type": "address"
-			}
-		],
-		"name": "eligible",
-		"outputs": [
-			{
-				"name": "",
-				"type": "bool"
-			}
-		],
-		"payable": false,
-		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"constant": true,
-		"inputs": [
-			{
-				"name": "",
-				"type": "uint256"
-			}
-		],
-		"name": "finaltally",
-		"outputs": [
-			{
-				"name": "",
-				"type": "uint256"
-			}
-		],
-		"payable": false,
-		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"constant": true,
-		"inputs": [],
-		"name": "getVoter",
-		"outputs": [
-			{
-				"name": "_registeredkey",
-				"type": "uint256"
-			},
-			{
-				"name": "_reconstructedkey",
-				"type": "uint256"
-			},
-			{
-				"name": "_commitment",
-				"type": "bytes32"
-			}
-		],
-		"payable": false,
-		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"constant": true,
-		"inputs": [],
-		"name": "owner",
-		"outputs": [
-			{
-				"name": "",
-				"type": "address"
-			}
-		],
-		"payable": false,
-		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"constant": true,
-		"inputs": [],
-		"name": "question",
-		"outputs": [
-			{
-				"name": "",
-				"type": "string"
-			}
-		],
-		"payable": false,
-		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"constant": true,
-		"inputs": [
-			{
-				"name": "",
-				"type": "address"
-			}
-		],
-		"name": "refunds",
-		"outputs": [
-			{
-				"name": "",
-				"type": "uint256"
-			}
-		],
-		"payable": false,
-		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"constant": true,
-		"inputs": [
-			{
-				"name": "",
-				"type": "address"
-			}
-		],
-		"name": "registered",
-		"outputs": [
-			{
-				"name": "",
-				"type": "bool"
-			}
-		],
-		"payable": false,
-		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"constant": true,
-		"inputs": [],
-		"name": "state",
-		"outputs": [
-			{
-				"name": "",
-				"type": "uint8"
-			}
-		],
-		"payable": false,
-		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"constant": true,
-		"inputs": [],
-		"name": "totalcommitted",
-		"outputs": [
-			{
-				"name": "",
-				"type": "uint256"
-			}
-		],
-		"payable": false,
-		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"constant": true,
-		"inputs": [],
-		"name": "totaleligible",
-		"outputs": [
-			{
-				"name": "",
-				"type": "uint256"
-			}
-		],
-		"payable": false,
-		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"constant": true,
-		"inputs": [],
-		"name": "totalregistered",
-		"outputs": [
-			{
-				"name": "",
-				"type": "uint256"
-			}
-		],
-		"payable": false,
-		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"constant": true,
-		"inputs": [],
-		"name": "totalvoted",
-		"outputs": [
-			{
-				"name": "",
-				"type": "uint256"
-			}
-		],
-		"payable": false,
-		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"constant": true,
-		"inputs": [
-			{
-				"name": "xG",
-				"type": "uint256"
-			},
-			{
-				"name": "r",
-				"type": "uint256"
-			},
-			{
-				"name": "vG",
-				"type": "uint256"
-			}
-		],
-		"name": "verifyZKP",
-		"outputs": [
-			{
-				"name": "",
-				"type": "bool"
-			}
-		],
-		"payable": false,
-		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"constant": true,
-		"inputs": [
-			{
-				"name": "",
-				"type": "address"
-			}
-		],
-		"name": "votecast",
-		"outputs": [
-			{
-				"name": "",
-				"type": "bool"
-			}
-		],
-		"payable": false,
-		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"constant": true,
-		"inputs": [
-			{
-				"name": "",
-				"type": "uint256"
-			}
-		],
-		"name": "voters",
-		"outputs": [
-			{
-				"name": "addr",
-				"type": "address"
-			},
-			{
-				"name": "registeredkey",
-				"type": "uint256"
-			},
-			{
-				"name": "reconstructedkey",
-				"type": "uint256"
-			},
-			{
-				"name": "commitment",
-				"type": "bytes32"
-			},
-			{
-				"name": "vote",
-				"type": "uint256"
-			}
-		],
-		"payable": false,
-		"stateMutability": "view",
-		"type": "function"
-	}
-];
+var abi = [{"constant":true,"inputs":[{"name":"","type":"address"}],"name":"eligible","outputs":[{"name":"","type":"bool"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":false,"inputs":[],"name":"computeTally","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":true,"inputs":[{"name":"","type":"address"}],"name":"addressid","outputs":[{"name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[],"name":"totaleligible","outputs":[{"name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[],"name":"getVoter","outputs":[{"name":"_registeredkey","type":"uint256"},{"name":"_reconstructedkey","type":"uint256"},{"name":"_commitment","type":"bytes32"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[],"name":"commitmentphase","outputs":[{"name":"","type":"bool"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[],"name":"question","outputs":[{"name":"","type":"string"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":false,"inputs":[{"name":"params","type":"uint256[4]"},{"name":"y","type":"uint256"},{"name":"a1","type":"uint256"},{"name":"b1","type":"uint256"},{"name":"a2","type":"uint256"},{"name":"b2","type":"uint256"}],"name":"verify1outof2ZKP","outputs":[{"name":"","type":"bool"}],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":false,"inputs":[{"name":"addr","type":"address[]"}],"name":"setEligible","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":false,"inputs":[{"name":"h","type":"bytes32"}],"name":"submitCommitment","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":false,"inputs":[],"name":"finishRegistrationPhase","outputs":[{"name":"","type":"bool"}],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":true,"inputs":[],"name":"totalcommitted","outputs":[{"name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[{"name":"","type":"address"}],"name":"votecast","outputs":[{"name":"","type":"bool"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[],"name":"totalvoted","outputs":[{"name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[],"name":"owner","outputs":[{"name":"","type":"address"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":false,"inputs":[{"name":"_question","type":"string"},{"name":"enableCommitmentPhase","type":"bool"}],"name":"beginSignUp","outputs":[{"name":"","type":"bool"}],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":false,"inputs":[{"name":"params","type":"uint256[4]"},{"name":"y","type":"uint256"},{"name":"a1","type":"uint256"},{"name":"b1","type":"uint256"},{"name":"a2","type":"uint256"},{"name":"b2","type":"uint256"}],"name":"submitVote","outputs":[{"name":"","type":"bool"}],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":true,"inputs":[{"name":"","type":"address"}],"name":"commitment","outputs":[{"name":"","type":"bool"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[{"name":"","type":"address"}],"name":"registered","outputs":[{"name":"","type":"bool"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[{"name":"","type":"address"}],"name":"refunds","outputs":[{"name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[],"name":"state","outputs":[{"name":"","type":"uint8"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[{"name":"","type":"uint256"}],"name":"finaltally","outputs":[{"name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[],"name":"totalregistered","outputs":[{"name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[{"name":"","type":"uint256"}],"name":"voters","outputs":[{"name":"addr","type":"address"},{"name":"registeredkey","type":"uint256"},{"name":"reconstructedkey","type":"uint256"},{"name":"commitment","type":"bytes32"},{"name":"vote","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[{"name":"","type":"uint256"}],"name":"addresses","outputs":[{"name":"","type":"address"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":false,"inputs":[{"name":"xG","type":"uint256"},{"name":"vG","type":"uint256"},{"name":"r","type":"uint256"}],"name":"register","outputs":[{"name":"","type":"bool"}],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":true,"inputs":[{"name":"xG","type":"uint256"},{"name":"r","type":"uint256"},{"name":"vG","type":"uint256"}],"name":"verifyZKP","outputs":[{"name":"","type":"bool"}],"payable":false,"stateMutability":"view","type":"function"},{"inputs":[],"payable":false,"stateMutability":"nonpayable","type":"constructor"}];
 
-var abi_crypto = [
-	{
-		"constant": false,
-		"inputs": [
-			{
-				"name": "a",
-				"type": "uint256"
-			},
-			{
-				"name": "b",
-				"type": "uint256"
-			},
-			{
-				"name": "m",
-				"type": "uint256"
-			}
-		],
-		"name": "submod",
-		"outputs": [
-			{
-				"name": "",
-				"type": "uint256"
-			}
-		],
-		"payable": false,
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"constant": true,
-		"inputs": [
-			{
-				"name": "yG",
-				"type": "uint256"
-			},
-			{
-				"name": "x",
-				"type": "uint256"
-			},
-			{
-				"name": "v",
-				"type": "uint256"
-			}
-		],
-		"name": "createVote",
-		"outputs": [
-			{
-				"name": "y",
-				"type": "uint256"
-			}
-		],
-		"payable": false,
-		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"constant": false,
-		"inputs": [
-			{
-				"name": "x",
-				"type": "uint256"
-			},
-			{
-				"name": "v",
-				"type": "uint256"
-			}
-		],
-		"name": "createZKP",
-		"outputs": [
-			{
-				"name": "res",
-				"type": "uint256[2]"
-			}
-		],
-		"payable": false,
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"constant": false,
-		"inputs": [
-			{
-				"name": "xG",
-				"type": "uint256"
-			},
-			{
-				"name": "yG",
-				"type": "uint256"
-			},
-			{
-				"name": "y",
-				"type": "uint256"
-			}
-		],
-		"name": "commitToVote",
-		"outputs": [
-			{
-				"name": "",
-				"type": "bytes32"
-			}
-		],
-		"payable": false,
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"constant": true,
-		"inputs": [
-			{
-				"name": "xG",
-				"type": "uint256"
-			},
-			{
-				"name": "r",
-				"type": "uint256"
-			},
-			{
-				"name": "vG",
-				"type": "uint256"
-			}
-		],
-		"name": "verifyZKP",
-		"outputs": [
-			{
-				"name": "",
-				"type": "bool"
-			}
-		],
-		"payable": false,
-		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"inputs": [],
-		"payable": false,
-		"stateMutability": "nonpayable",
-		"type": "constructor"
-	},
-	{
-		"anonymous": false,
-		"inputs": [
-			{
-				"indexed": false,
-				"name": "x1",
-				"type": "uint256"
-			},
-			{
-				"indexed": false,
-				"name": "x2",
-				"type": "uint256"
-			}
-		],
-		"name": "Debug",
-		"type": "event"
-	}
-];
+var abi_crypto = [{"constant":false,"inputs":[{"name":"params","type":"uint256[4]"},{"name":"xG","type":"uint256"},{"name":"yG","type":"uint256"},{"name":"y","type":"uint256"},{"name":"a1","type":"uint256"},{"name":"b1","type":"uint256"},{"name":"a2","type":"uint256"},{"name":"b2","type":"uint256"}],"name":"commitToVote","outputs":[{"name":"","type":"bytes32"}],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":false,"inputs":[{"name":"xG","type":"uint256"},{"name":"yG","type":"uint256"},{"name":"w","type":"uint256"},{"name":"r1","type":"uint256"},{"name":"d1","type":"uint256"},{"name":"x","type":"uint256"}],"name":"create1outof2ZKPYesVote","outputs":[{"name":"res","type":"uint256[5]"},{"name":"res2","type":"uint256[4]"}],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":false,"inputs":[{"name":"a","type":"uint256"},{"name":"b","type":"uint256"},{"name":"m","type":"uint256"}],"name":"submod","outputs":[{"name":"","type":"uint256"}],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":true,"inputs":[{"name":"yG","type":"uint256"},{"name":"x","type":"uint256"},{"name":"v","type":"uint256"}],"name":"createVote","outputs":[{"name":"y","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":false,"inputs":[{"name":"x","type":"uint256"},{"name":"v","type":"uint256"}],"name":"createZKP","outputs":[{"name":"res","type":"uint256[2]"}],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":false,"inputs":[{"name":"params","type":"uint256[4]"},{"name":"xG","type":"uint256"},{"name":"yG","type":"uint256"},{"name":"y","type":"uint256"},{"name":"a1","type":"uint256"},{"name":"b1","type":"uint256"},{"name":"a2","type":"uint256"},{"name":"b2","type":"uint256"}],"name":"verify1outof2ZKP","outputs":[{"name":"","type":"bool"}],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":false,"inputs":[{"name":"xG","type":"uint256"},{"name":"yG","type":"uint256"},{"name":"w","type":"uint256"},{"name":"r2","type":"uint256"},{"name":"d2","type":"uint256"},{"name":"x","type":"uint256"}],"name":"create1outof2ZKPNoVote","outputs":[{"name":"res","type":"uint256[5]"},{"name":"res2","type":"uint256[4]"}],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":true,"inputs":[{"name":"xG","type":"uint256"},{"name":"r","type":"uint256"},{"name":"vG","type":"uint256"}],"name":"verifyZKP","outputs":[{"name":"","type":"bool"}],"payable":false,"stateMutability":"view","type":"function"},{"inputs":[],"payable":false,"stateMutability":"nonpayable","type":"constructor"},{"anonymous":false,"inputs":[{"indexed":false,"name":"x1","type":"uint256"},{"indexed":false,"name":"x2","type":"uint256"}],"name":"Debug","type":"event"}];
 
 // MyVoting Contract
 var myvoting = web3.eth.contract(abi);
@@ -664,7 +37,7 @@ var myvotingAddr;// = myvoting.at("0xfb9e922c6b42dd92f40c860555163895d635467b");
 
 // Local Crypto Contract
 var crypto_contract = web3.eth.contract(abi_crypto);
-var cryptoAddr = crypto_contract.at("0xf42b8390bc7bd501b959e68384c739df6a53b6f7");
+var cryptoAddr = crypto_contract.at("0xd6010966995fe164021f7b36849d877fc5311255");
 
     var password;// = "";
     var accounts_index;
@@ -733,6 +106,9 @@ function getRndInteger(min, max) {
 function generateKeys(){
 	document.getElementById('xkey').value = getRndInteger(1, p);
 	document.getElementById('vkey').value = getRndInteger(1, p);
+	document.getElementById('wkey').value = getRndInteger(1, p - 1);
+	document.getElementById('rkey').value = getRndInteger(1, p - 1);
+	document.getElementById('dkey').value = getRndInteger(1, p - 1);
 }
 
 function expmod( base, exp, mod ){
@@ -749,16 +125,25 @@ function uploadKeys() {
 	if(!keysUploaded) {
 		var _x = document.getElementById('xkey').value;
 		var _v = document.getElementById('vkey').value;
-		if(_x < 1 || _v < 1 || _x >= p, _v >= p){
+		var _w = document.getElementById('wkey').value;
+		var _r = document.getElementById('rkey').value;
+		var _d = document.getElementById('dkey').value;
+		if(_x < 1 || _v < 1 || _w < 1 || _r < 1 || _d < 1 || _x >= p || _v >= p || _w >= p - 1 || _r >= p - 1 || _d >= p - 1){
 			alert('Wrong input');
 			return;
 		} else{
 			keysUploaded = true;
 			x = _x;
 			v = _v;
+			w = _w;
+			r = _r;
+			d = _d;
 			xG = expmod(g, x, p);
 			console.log(x);
 			console.log(v);
+			console.log(w);
+			console.log(r);
+			console.log(d);
 			console.log(xG);
 			currentState();
 		}
@@ -875,42 +260,50 @@ function vote(choice) {
     var xG = voter[0];
     var yG = voter[1];
 	
+	console.log("xgyg");
+	console.log(xG.toString());
+	console.log(yG.toString());
 	var result;
-	var y;//!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+	//var y;//!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
     if (choice == 1) {
         choice_text = "YES";
-        //result = cryptoAddr.create1outof2ZKPYesVote.call(xG, yG, w, r, d, x, {
-        //    from: web3.eth.accounts[accounts_index]
-        //});
-		y = cryptoAddr.createVote.call(yG, x, 1, {
+        result = cryptoAddr.create1outof2ZKPYesVote.call(xG, yG, w, r, d, x, {
             from: web3.eth.accounts[accounts_index]
         });
+		//y = cryptoAddr.createVote.call(yG, x, 1, {
+        //    from: web3.eth.accounts[accounts_index]
+        //});
     } else {
         choice_text = "NO";
-        //result = cryptoAddr.create1outof2ZKPNoVote.call(xG, yG, w, r, d, x, {
-        //    from: web3.eth.accounts[accounts_index]
-        //});
-		y = cryptoAddr.createVote.call(yG, x, 0, {
+        result = cryptoAddr.create1outof2ZKPNoVote.call(xG, yG, w, r, d, x, {
             from: web3.eth.accounts[accounts_index]
         });
+		//y = cryptoAddr.createVote.call(yG, x, 0, {
+        //    from: web3.eth.accounts[accounts_index]
+        //});
     }
 
 
 
-    //var y = [result[0][0], result[0][1]];
-    //var a1 = [result[0][2], result[0][3]];
-    //var b1 = [result[0][4], result[0][5]];
-    //var a2 = [result[0][6], result[0][7]];
-    //var b2 = [result[0][8], result[0][9]];
+    var y = result[0][0];
+    var a1 = result[0][1];
+    var b1 = result[0][2];
+    var a2 = result[0][3];
+    var b2 = result[0][4];
 
-    //var params = [result[1][0], result[1][1], result[1][2], result[1][3]];
-    //result = anonymousvotingAddr.verify1outof2ZKP.call(params, y, a1, b1, a2, b2, {
-    //    from: web3.eth.accounts[accounts_index]
-    //});
+    var params = [result[1][0], result[1][1], result[1][2], result[1][3]];
+	console.log("params");
+	console.log(params[0].toString());
+	console.log(params[1].toString());
+	console.log(params[2].toString());
+	console.log(params[3].toString());
+    result = myvotingAddr.verify1outof2ZKP.call(params, y, a1, b1, a2, b2, {
+        from: web3.eth.accounts[accounts_index]
+    });
 
     // Let's make sure the zero knowledge proof checked out...
-    if (true) {//result) {
+    if (result) {
 
         var castvote = false;
 
@@ -927,7 +320,7 @@ function vote(choice) {
                 //web3.personal.unlockAccount(addr, password);
 
                 // Get us a hash commitment to the voter's zero knowledge proof
-                var h = cryptoAddr.commitToVote.call(/*params, */xG, yG, y/*, a1, b1, a2, b2*/, {
+                var h = cryptoAddr.commitToVote.call(params, xG, yG, y, a1, b1, a2, b2, {
                     from: web3.eth.accounts[accounts_index]
                 });
 
@@ -951,7 +344,7 @@ function vote(choice) {
             // Should we broadcast the vote?
             if (castvote) {
                 //web3.personal.unlockAccount(addr, password);
-                result = myvotingAddr.submitVote.sendTransaction(/*params, */y/*, a1, b1, a2, b2*/, {
+                result = myvotingAddr.submitVote.sendTransaction(params, y, a1, b1, a2, b2, {
                     from: web3.eth.accounts[accounts_index],
                     gas: 4200000
                 });

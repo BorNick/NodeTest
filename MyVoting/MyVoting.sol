@@ -282,7 +282,7 @@ contract MyVoting is owned {
     }
     
     // Given the 1 out of 2 ZKP - record the users vote!
-    function submitVote(/*uint[4] params,*/ uint y/*, uint[2] a1, uint[2] b1, uint[2] a2, uint[2] b2*/) inState(State.VOTE) public returns (bool) {
+    function submitVote(uint[4] params, uint y, uint a1, uint b1, uint a2, uint b2) inState(State.VOTE) public returns (bool) {
 
         uint c = addressid[msg.sender];
 
@@ -294,7 +294,7 @@ contract MyVoting is owned {
             if(commitmentphase) {
 
                 // Voter has previously committed to the entire zero knowledge proof...
-                bytes32 h = sha3(msg.sender/*, params*/, voters[c].registeredkey, voters[c].reconstructedkey, y/*, a1, b1, a2, b2*/);
+                bytes32 h = sha3(msg.sender, params, voters[c].registeredkey, voters[c].reconstructedkey, y, a1, b1, a2, b2);
 
                 // No point verifying the ZKP if it doesn't match the voter's commitment.
                 if(voters[c].commitment != h) {
@@ -303,7 +303,7 @@ contract MyVoting is owned {
             }
 
             // Verify the ZKP for the vote being cast
-            if(true){//verify1outof2ZKP(params, y, a1, b1, a2, b2)) {
+            if(verify1outof2ZKP(params, y, a1, b1, a2, b2)) {
                 voters[c].vote = y;
 
                 votecast[msg.sender] = true;
@@ -371,88 +371,45 @@ contract MyVoting is owned {
     }
     
     // We verify that the ZKP is of 0 or 1.
-    /*function verify1outof2ZKP(uint[4] params, uint[2] y, uint[2] a1, uint[2] b1, uint[2] a2, uint[2] b2) returns (bool) {
-        uint[2] memory temp1;
-        uint[3] memory temp2;
-        uint[3] memory temp3;
+  function verify1outof2ZKP(uint[4] params, uint y, uint a1, uint b1, uint a2, uint b2) returns (bool) {
 
-      // Voter Index
-      uint i = addressid[msg.sender];
+      uint c = addressid[msg.sender];
+      
+      uint yG = voters[c].reconstructedkey;
+      uint xG = voters[c].registeredkey;
 
-      // We already have them stored...
-      // TODO: Decide if this should be in SubmitVote or here...
-      uint[2] memory yG = voters[i].reconstructedkey;
-      uint[2] memory xG = voters[i].registeredkey;
-
-      // Make sure we are only dealing with valid public keys!
-      if(!Secp256k1.isPubKey(xG) || !Secp256k1.isPubKey(yG) || !Secp256k1.isPubKey(y) || !Secp256k1.isPubKey(a1) ||
-         !Secp256k1.isPubKey(b1) || !Secp256k1.isPubKey(a2) || !Secp256k1.isPubKey(b2)) {
-         return false;
-      }
-
-      // Does c =? d1 + d2 (mod n)
-      if(uint(sha256(msg.sender, xG, y, a1, b1, a2, b2)) != addmod(params[0],params[1],nn)) {
+      //c = H(i, xG, Y, a1, b1, a2, b2);
+      // Does c =? d1 + d2 (mod p - 1)
+      if((uint(sha256(msg.sender, xG, y, a1, b1, a2, b2)) % (p - 1)) != addmod(params[0],params[1], p - 1)) {
         return false;
       }
 
       // a1 =? g^{r1} * x^{d1}
-      temp2 = Secp256k1._mul(params[2], G);
-      temp3 = Secp256k1._add(temp2, Secp256k1._mul(params[0], xG));
-      ECCMath.toZ1(temp3, pp);
 
-      if(a1[0] != temp3[0] || a1[1] != temp3[1]) {
+      if(a1 != mulmod(ECCMath.expmod(g, params[2], p), ECCMath.expmod(xG, params[0], p), p)) {
         return false;
       }
 
-      //b1 =? h^{r1} * y^{d1} (temp = affine 'y')
-      temp2 = Secp256k1._mul(params[2],yG);
-      temp3 = Secp256k1._add(temp2, Secp256k1._mul(params[0], y));
-      ECCMath.toZ1(temp3, pp);
+      //b1 =? h^{r1} * y^{d1}
 
-      if(b1[0] != temp3[0] || b1[1] != temp3[1]) {
+      if(b1 != mulmod(ECCMath.expmod(yG, params[2], p), ECCMath.expmod(y, params[0], p), p)) {
         return false;
       }
 
       //a2 =? g^{r2} * x^{d2}
-      temp2 = Secp256k1._mul(params[3],G);
-      temp3 = Secp256k1._add(temp2, Secp256k1._mul(params[1], xG));
-      ECCMath.toZ1(temp3, pp);
 
-      if(a2[0] != temp3[0] || a2[1] != temp3[1]) {
+      if(a2 != mulmod(ECCMath.expmod(g, params[3], p), ECCMath.expmod(xG, params[1], p), p)) {
         return false;
       }
+      
+      // get inverse g
+      uint gInv = ECCMath.invmod(g, p);
 
-      // Negate the 'y' co-ordinate of g
-      temp1[0] = G[0];
-      temp1[1] = pp - G[1];
-
-      // get 'y'
-      temp3[0] = y[0];
-      temp3[1] = y[1];
-      temp3[2] = 1;
-
-      // y-g
-      temp2 = Secp256k1._addMixed(temp3,temp1);
-
-      // Return to affine co-ordinates
-      ECCMath.toZ1(temp2, pp);
-      temp1[0] = temp2[0];
-      temp1[1] = temp2[1];
-
-      // (y-g)^{d2}
-      temp2 = Secp256k1._mul(params[1],temp1);
-
-      // Now... it is h^{r2} + temp2..
-      temp3 = Secp256k1._add(Secp256k1._mul(params[3],yG),temp2);
-
-      // Convert to Affine Co-ordinates
-      ECCMath.toZ1(temp3, pp);
-
-      // Should all match up.
-      if(b2[0] != temp3[0] || b2[1] != temp3[1]) {
+      // b2 =? h^{r2} * (y/g)^{d2}
+      if(b2 != mulmod(ECCMath.expmod(yG, params[3], p), ECCMath.expmod(mulmod(y, gInv, p), params[1], p), p)) {
         return false;
       }
 
       return true;
-    }*/
+    }
 }
