@@ -94,10 +94,10 @@ library ECCMath_noconflict {
 contract LocalCrypto {
 
   // Modulus for public keys
-  uint constant p = 11;
+  uint constant p = 55059749849029036137623472859638053849197995389050050743443175625939575454347;//11;
 
   // Base point (generator) G
-  uint constant g = 6;
+  uint constant g = 35466993160333349412106005358678383853312611466623145131611066824410945834012;//6;
 
 
   event Debug(uint x1, uint x2);

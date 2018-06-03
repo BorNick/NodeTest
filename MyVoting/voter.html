@@ -6,6 +6,9 @@
 		<script src="js\web3.js"></script>
 		<script src="js\jquery.min.js"></script>
 		<script src="js\bootstrap.min.js"></script>
+		<script src="js\sha3.min.js"></script>
+		<script src="js\bignumber.min.js"></script>
+		<script src="LocalCrypto.js"></script>
 	</head>
 	<body>
 		
@@ -34,11 +37,11 @@
 			<p>If you haven't uploaded your keys, you can generate them randomly and save somewhere.</p>
 			<button onclick="generateKeys()" class="btn btn-primary">Generate keys</button>
 			<br><br>
-			<p>X: <input type='number' min = '1' id='xkey'/> </p>
-			<p>V: <input type='number' min = '1' id='vkey'/> </p>
-			<p>W: <input type='number' min = '1' id='wkey'/> </p>
-			<p>R: <input type='number' min = '1' id='rkey'/> </p>
-			<p>D: <input type='number' min = '1' id='dkey'/> </p>
+			<p>X: <input type='text' id='xkey'/> </p>
+			<p>V: <input type='text' id='vkey'/> </p>
+			<p>W: <input type='text' id='wkey'/> </p>
+			<p>R: <input type='text' id='rkey'/> </p>
+			<p>D: <input type='text' id='dkey'/> </p>
 			<button onclick="uploadKeys()" class="btn btn-primary">OK</button>
 		</div>
 		<div id="registration" class="container">

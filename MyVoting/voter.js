@@ -6,8 +6,8 @@ var xG;// = 10;
 var w;
 var r;
 var d;
-var p = 11;
-var g = 6;
+var p = BigNumber('0x79BAB6CBF40B063F830C72B65E428E153CA84503A6ABBCE91A3A1DF85C293A8B');//11;//55059749849029036137623472859638053849197995389050050743443175625939575454347
+var g = BigNumber('0x4E699B53C45841158AA9FA8B9DEA0C398C5BDAA47F5669E763C5D793554C4C1C');//6;//35466993160333349412106005358678383853312611466623145131611066824410945834012
 
 var connectedToContract = false;
 var openedContractChoice = false;
@@ -37,8 +37,9 @@ var myvotingAddr;// = myvoting.at("0xfb9e922c6b42dd92f40c860555163895d635467b");
 
 // Local Crypto Contract
 var crypto_contract = web3.eth.contract(abi_crypto);
-var cryptoAddr = crypto_contract.at("0xd6010966995fe164021f7b36849d877fc5311255");
+var cryptoAddr = crypto_contract.at("0x4b7a1efd25def53cfceeaa08a4671910d51324c3");
 
+	var addr;
     var password;// = "";
     var accounts_index;
 	
@@ -84,7 +85,7 @@ function selectBox() {
 
         // Only create a drop-down box if we have found an address that is eligible to vote!
         if (foundEligible) {
-            var selectbox = "<h2>Eligible Ethereum Accounts</h2><br><p>Address:</p><select id='addrs' class='action-list'>" + listEligible + "</select> <br><br><p>Password:</p> <input type='password' id='passwordf' value='password' name='fname' class='action-text'><input type='button' class='action-button'  value = 'Login' onclick='unlock();'>";
+            var selectbox = "<h2>Eligible Ethereum Accounts</h2><br><p>Address:</p><select id='addrs' class='action-list'>" + listEligible + "</select> <br><br><p>Password:</p> <input type='password' id='passwordf' value='123' name='fname' class='action-text'><input type='button' class='action-button'  value = 'Login' onclick='unlock();'>";
             document.getElementById('dropdown').innerHTML = selectbox;
         }
 
@@ -100,15 +101,15 @@ function keysInput() {
 }
 
 function getRndInteger(min, max) {
-    return Math.floor(Math.random() * (max - min)) + min;
+    return (BigNumber.random(100).multipliedBy(max.minus(min))).integerValue(BigNumber.ROUND_DOWN).plus(min);
 }
 
 function generateKeys(){
-	document.getElementById('xkey').value = getRndInteger(1, p);
-	document.getElementById('vkey').value = getRndInteger(1, p);
-	document.getElementById('wkey').value = getRndInteger(1, p - 1);
-	document.getElementById('rkey').value = getRndInteger(1, p - 1);
-	document.getElementById('dkey').value = getRndInteger(1, p - 1);
+	document.getElementById('xkey').value = '0x' + getRndInteger(BigNumber(1), p).toString(16);
+	document.getElementById('vkey').value = '0x' + getRndInteger(BigNumber(1), p).toString(16);
+	document.getElementById('wkey').value = '0x' + getRndInteger(BigNumber(1), p.minus(1)).toString(16);
+	document.getElementById('rkey').value = '0x' + getRndInteger(BigNumber(1), p.minus(1)).toString(16);
+	document.getElementById('dkey').value = '0x' + getRndInteger(BigNumber(1), p.minus(1)).toString(16);
 }
 
 function expmod( base, exp, mod ){
@@ -123,12 +124,12 @@ function expmod( base, exp, mod ){
 
 function uploadKeys() {
 	if(!keysUploaded) {
-		var _x = document.getElementById('xkey').value;
-		var _v = document.getElementById('vkey').value;
-		var _w = document.getElementById('wkey').value;
-		var _r = document.getElementById('rkey').value;
-		var _d = document.getElementById('dkey').value;
-		if(_x < 1 || _v < 1 || _w < 1 || _r < 1 || _d < 1 || _x >= p || _v >= p || _w >= p - 1 || _r >= p - 1 || _d >= p - 1){
+		var _x = new BigNumber(document.getElementById('xkey').value);
+		var _v = new BigNumber(document.getElementById('vkey').value);
+		var _w = new BigNumber(document.getElementById('wkey').value);
+		var _r = new BigNumber(document.getElementById('rkey').value);
+		var _d = new BigNumber(document.getElementById('dkey').value);
+		if(_x.comparedTo(1) < 0 || _v.comparedTo(1) < 0 || _w.comparedTo(1) < 0 || _r.comparedTo(1) < 0 || _d.comparedTo(1) < 0 || _x.comparedTo(p) >= 0 || _v.comparedTo(p) >= 0 || _w.comparedTo(p.minus(1)) >= 0 || _r.comparedTo(p.minus(1)) >= 0 || _d.comparedTo(p.minus(1)) >= 0){
 			alert('Wrong input');
 			return;
 		} else{
@@ -138,13 +139,19 @@ function uploadKeys() {
 			w = _w;
 			r = _r;
 			d = _d;
-			xG = expmod(g, x, p);
-			console.log(x);
-			console.log(v);
-			console.log(w);
-			console.log(r);
-			console.log(d);
-			console.log(xG);
+			xG = g.exponentiatedBy (x, p);
+			console.log('x = 0x' + x.toString(16));
+			console.log('v = 0x' + v.toString(16));
+			console.log('w = 0x' + w.toString(16));
+			console.log('r = 0x' + r.toString(16));
+			console.log('d = 0x' + d.toString(16));
+			console.log('xG = 0x' + xG.toString(16));
+			console.log('x = ' + x);
+			console.log('v = ' + v);
+			console.log('w = ' + w);
+			console.log('r = ' + r);
+			console.log('d = ' + d);
+			console.log('xG = ' + xG);
 			currentState();
 		}
 	}
@@ -196,14 +203,14 @@ function register() {
 
 	
     // We prove knowledge of the voting key
-    var single_zkp = cryptoAddr.createZKP.call(x, v, {
+    var single_zkp = cryptoAddr.createZKP.call(x.toString(), v.toString(), {
         from: web3.eth.accounts[accounts_index]
     });
 
-    //web3.personal.unlockAccount(addr, password);
+    web3.personal.unlockAccount(addr, password);
 
     // Lets make sure the ZKP is valid!
-    var verifyres = cryptoAddr.verifyZKP.call(xG, single_zkp[0], single_zkp[1], {
+    var verifyres = cryptoAddr.verifyZKP.call(xG.toString(), single_zkp[0], single_zkp[1], {
         from: web3.eth.accounts[accounts_index]
     });
 
@@ -212,14 +219,14 @@ function register() {
         return;
     }
 
-    var res = myvotingAddr.register.call(xG, single_zkp[1], single_zkp[0], {
+    var res = myvotingAddr.register.call(xG.toString(), single_zkp[1], single_zkp[0], {
             from: web3.eth.accounts[accounts_index],
 			gas: 4200000
         });
 
     // Submit voting key to the network
     if (res) {
-        myvotingAddr.register.sendTransaction(xG, single_zkp[1], single_zkp[0], {
+        myvotingAddr.register.sendTransaction(xG.toString(), single_zkp[1], single_zkp[0], {
             from: web3.eth.accounts[accounts_index],
             gas: 4200000
         });
@@ -268,7 +275,7 @@ function vote(choice) {
 
     if (choice == 1) {
         choice_text = "YES";
-        result = cryptoAddr.create1outof2ZKPYesVote.call(xG, yG, w, r, d, x, {
+        result = cryptoAddr.create1outof2ZKPYesVote.call(xG.toString(), yG.toString(), w.toString(), r.toString(), d.toString(), x.toString(), {
             from: web3.eth.accounts[accounts_index]
         });
 		//y = cryptoAddr.createVote.call(yG, x, 1, {
@@ -276,7 +283,7 @@ function vote(choice) {
         //});
     } else {
         choice_text = "NO";
-        result = cryptoAddr.create1outof2ZKPNoVote.call(xG, yG, w, r, d, x, {
+        result = cryptoAddr.create1outof2ZKPNoVote.call(xG.toString(), yG.toString(), w.toString(), r.toString(), d.toString(), x.toString(), {
             from: web3.eth.accounts[accounts_index]
         });
 		//y = cryptoAddr.createVote.call(yG, x, 0, {
@@ -293,6 +300,11 @@ function vote(choice) {
     var b2 = result[0][4];
 
     var params = [result[1][0], result[1][1], result[1][2], result[1][3]];
+	console.log("ab");
+	console.log(a1.toString());
+	console.log(b1.toString());
+	console.log(a2.toString());
+	console.log(b2.toString());
 	console.log("params");
 	console.log(params[0].toString());
 	console.log(params[1].toString());
@@ -317,13 +329,16 @@ function vote(choice) {
             }
 
             if (castvote) {
-                //web3.personal.unlockAccount(addr, password);
+                web3.personal.unlockAccount(addr, password);
 
                 // Get us a hash commitment to the voter's zero knowledge proof
                 var h = cryptoAddr.commitToVote.call(params, xG, yG, y, a1, b1, a2, b2, {
                     from: web3.eth.accounts[accounts_index]
                 });
 
+				console.log(h);
+				console.log(sha3_256('0x' + web3.eth.accounts[accounts_index], params[0], params[1], params[2], params[3], xG, yG, y, a1, b1, a2, b2));
+				console.log(keccak_256('0x' + web3.eth.accounts[accounts_index], params[0], params[1], params[2], params[3], xG, yG, y, a1, b1, a2, b2));
                 // Send commitment to Etherum!
                 result = myvotingAddr.submitCommitment.sendTransaction(h, {
                     from: web3.eth.accounts[accounts_index],
@@ -343,7 +358,7 @@ function vote(choice) {
 
             // Should we broadcast the vote?
             if (castvote) {
-                //web3.personal.unlockAccount(addr, password);
+                web3.personal.unlockAccount(addr, password);
                 result = myvotingAddr.submitVote.sendTransaction(params, y, a1, b1, a2, b2, {
                     from: web3.eth.accounts[accounts_index],
                     gas: 4200000
