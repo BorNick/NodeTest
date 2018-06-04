@@ -109,6 +109,33 @@ contract owned {
 
 contract MyVoting is owned {
     
+    
+    event StageChangeEvent(
+        string ended,
+        string begun
+        );
+    event SetEligibleEvent(
+        address user,
+        address newEligible
+        );
+    event RegisteredEvent(
+        address user,
+        uint publicKey
+        );
+    event CommitedEvent(
+        address user,
+        bytes32 commit
+        );
+    event VotedEvent(
+        address user,
+        uint vote
+        );
+    event TallyEvent(
+        address user,
+        uint yesVotes,
+        uint totalVotes
+        );
+    
     // Modulus for public keys
     uint constant p = 55059749849029036137623472859638053849197995389050050743443175625939575454347;//11;
     
@@ -174,6 +201,7 @@ contract MyVoting is owned {
                 eligible[addr[i]] = true;
                 addresses.push(addr[i]);
                 totaleligible += 1;
+                emit SetEligibleEvent(msg.sender, addr[i]);
             }
         }
     }
@@ -188,6 +216,7 @@ contract MyVoting is owned {
 
         question = _question;
         commitmentphase = enableCommitmentPhase;
+        emit StageChangeEvent("SETUP", "SIGNUP");
 
       return true;
     }
@@ -206,6 +235,7 @@ contract MyVoting is owned {
                 voters[totalregistered] = Voter({addr: msg.sender, registeredkey: xG, reconstructedkey: 0, vote: 0, commitment: 0});
                 registered[msg.sender] = true;
                 totalregistered += 1;
+                emit RegisteredEvent(msg.sender, xG);
 
                 return true;
             }
@@ -249,8 +279,10 @@ contract MyVoting is owned {
         // Now we either enter the commitment phase (option) or voting phase.
         if(commitmentphase) {
             state = State.COMMITMENT;
+            emit StageChangeEvent("SIGNUP", "COMMITMENT");
         } else {
             state = State.VOTE;
+            emit StageChangeEvent("SIGNUP", "VOTE");
         }
     }
     
@@ -273,10 +305,12 @@ contract MyVoting is owned {
             uint index = addressid[msg.sender];
             voters[index].commitment = h;
             totalcommitted = totalcommitted + 1;
+            emit CommitedEvent(msg.sender, h);
 
             // Once we have recorded all commitments... let voters vote!
             if(totalcommitted == totalregistered) {
                 state = State.VOTE;
+                emit StageChangeEvent("COMMITMENT", "VOTE");
             }
         }
     }
@@ -309,6 +343,8 @@ contract MyVoting is owned {
                 votecast[msg.sender] = true;
 
                 totalvoted += 1;
+                
+                emit VotedEvent(msg.sender, y);
 
                 return true;
             }
@@ -340,6 +376,9 @@ contract MyVoting is owned {
         }
 
 
+        emit StageChangeEvent("VOTE", "TALLY");
+        
+        
         for(i = 0; i <= totalregistered; i++){
             if(product == ECCMath.expmod(g, i, p)){
                 finaltally[0] = i;
@@ -347,6 +386,8 @@ contract MyVoting is owned {
         }
         finaltally[1] = totalregistered;
         state = State.FINISHED;
+        
+        emit TallyEvent(msg.sender, finaltally[0], finaltally[1]);
     }
     
     function verifyZKP(uint xG, uint r, uint vG) public view returns (bool){
