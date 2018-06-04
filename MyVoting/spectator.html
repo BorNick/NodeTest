@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>Spectator page</title>
+		<link href="css\bootstrap.min.css" rel="stylesheet">
+		<script src="js\web3.js"></script>
+		<script src="js\jquery.min.js"></script>
+		<script src="js\bootstrap.min.js"></script>
+	</head>
+	<body>
+		<div id="info" class="container">
+			<p class="text-body">Current smart contract address:</p>
+			<p id="contract_address" class="text-body">Not chosen</p>
+			<p id="section_desc" class="text-body"></p>
+			<p id="question" class="text-body"></p>
+		</div>
+		<div id="contract" class="container">
+			<p class="text-body">Connect to an existing smart contract by its address</p>
+			<br><br>
+			<input id = "addr" type="text">
+			<button onclick='connectToContract()' class="btn btn-secondary">Connect to a contract</button>
+		</div>
+		<div hidden id="log" class="container">
+			<h2>Voting log</h2>
+		</div>
+		<script src= "spectator.js"></script>
+	</body>
+</html>
