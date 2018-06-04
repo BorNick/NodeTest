@@ -165,7 +165,8 @@ console.log("Commit started");
 
 if(enableCommitment){
 	for(var i = 0; i < votersNum; i++){
-		var h = cryptoAddr.commitToVote.call([ZKP1outof2[i][1][0], ZKP1outof2[i][1][1], ZKP1outof2[i][1][2], ZKP1outof2[i][1][3]], keys[i][0].toString(), keys[i][6], ZKP1outof2[i][0][0], ZKP1outof2[i][0][1], ZKP1outof2[i][0][2], ZKP1outof2[i][0][3], ZKP1outof2[i][0][4], {
+		//console.log(keys[i][6].toString());
+		var h = cryptoAddr.commitToVote.call([ZKP1outof2[i][1][0], ZKP1outof2[i][1][1], ZKP1outof2[i][1][2], ZKP1outof2[i][1][3]], keys[i][5].toString(), keys[i][6], ZKP1outof2[i][0][0], ZKP1outof2[i][0][1], ZKP1outof2[i][0][2], ZKP1outof2[i][0][3], ZKP1outof2[i][0][4], {
             from: web3.eth.accounts[i + 2]
             });
 		myvotingAddr.submitCommitment.sendTransaction(h, {
@@ -182,7 +183,7 @@ function startVote(){
 
 console.log("Vote started");
 
-console.log(ZKP1outof2[0][1][0].toString());
+//console.log(ZKP1outof2[0][1][0].toString());
 
 for(var i = 0; i < votersNum; i++){
 	if(!myvotingAddr.verify1outof2ZKP.call([ZKP1outof2[i][1][0], ZKP1outof2[i][1][1], ZKP1outof2[i][1][2], ZKP1outof2[i][1][3]], ZKP1outof2[i][0][0], ZKP1outof2[i][0][1], ZKP1outof2[i][0][2], ZKP1outof2[i][0][3], ZKP1outof2[i][0][4], {
@@ -191,13 +192,22 @@ for(var i = 0; i < votersNum; i++){
 		console.log("ZKP[" + i + "] wrong");
 	}
 	web3.personal.unlockAccount(web3.eth.accounts[i + 2], password);
-	if(!myvotingAddr.submitVote.sendTransaction([ZKP1outof2[i][1][0], ZKP1outof2[i][1][1], ZKP1outof2[i][1][2], ZKP1outof2[i][1][3]], ZKP1outof2[i][0][0], ZKP1outof2[i][0][1], ZKP1outof2[i][0][2], ZKP1outof2[i][0][3], ZKP1outof2[i][0][4], {
-        from: web3.eth.accounts[i + 2],
-            gas: 4200000
+	if(myvotingAddr.submitVote.call([ZKP1outof2[i][1][0], ZKP1outof2[i][1][1], ZKP1outof2[i][1][2], ZKP1outof2[i][1][3]], ZKP1outof2[i][0][0], ZKP1outof2[i][0][1], ZKP1outof2[i][0][2], ZKP1outof2[i][0][3], ZKP1outof2[i][0][4], {
+        from: web3.eth.accounts[i + 2]
         })){
-			console.log("Voting failed");
+		myvotingAddr.submitVote.sendTransaction([ZKP1outof2[i][1][0], ZKP1outof2[i][1][1], ZKP1outof2[i][1][2], ZKP1outof2[i][1][3]], ZKP1outof2[i][0][0], ZKP1outof2[i][0][1], ZKP1outof2[i][0][2], ZKP1outof2[i][0][3], ZKP1outof2[i][0][4], {
+			from: web3.eth.accounts[i + 2],
+				gas: 4200000
+			});
+		}else {
+			console.log("Voting failed for " + i + "voter");
 		}
 }
+
+console.log("Vote finished");
+}
+
+function startTally(){
 
 console.log("Tally started");
 
@@ -223,5 +233,6 @@ console.log("Voter2 cost = " + web3.fromWei(voter2Cost, 'ether'));
 
 <button onclick='setElig()'>setElig</button>
 <button onclick='startVote()'>startVote</button>
+<button onclick='startTally()'>startTally</button>
 	</body>
 </html>

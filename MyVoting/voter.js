@@ -396,6 +396,7 @@ function createRegistration() {
 
 		document.getElementById('registration').removeAttribute("hidden");
 		document.getElementById('question').removeAttribute("hidden");
+		whatIsQuestion()
 		//document.getElementById('totalregistered').removeAttribute("hidden");
 	}
 
